@@ -1,3 +1,4 @@
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import {AppModule} from "./app.module";
@@ -5,7 +6,10 @@ import {AppModule} from "./app.module";
 
 async function start() {
     const PORT = process.env.PORT || 5000
-    const app = await NestFactory.create(AppModule)
+    const app = await NestFactory.create(AppModule, {
+        logger: ['log','error', 'warn', 'debug'],
+    })
+    app.useGlobalPipes(new ValidationPipe({transform: true}));
 
     const config = new DocumentBuilder()
         .setTitle('Backend Lesson')

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from 'src/roles/roles.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -6,6 +6,8 @@ import { User } from './users.model';
 
 @Injectable()
 export class UsersService {
+
+    private readonly logger = new Logger(UsersService.name);
 
     constructor (@InjectModel(User) private userRepository: typeof User,
     private roleService: RolesService){
@@ -33,6 +35,7 @@ export class UsersService {
     }
 
     async getUsersByEmail(email: string){
+        this.logger.debug(`Find user with email ${email}`)
         const user = await this.userRepository.findOne({where: {email}, include: {all: true}});
         return user;
     }
