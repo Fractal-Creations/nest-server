@@ -12,7 +12,7 @@ export class JwtAuthGuard implements CanActivate{
     private readonly logger = new Logger(JwtAuthGuard.name)
 
      canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean>  {
-        this.logger.debug('Start check auth role')
+        this.logger.debug('Start check JWT-token')
         const req = context.switchToHttp().getRequest()
         try{
             const authHeader = req.headers.authorization;
