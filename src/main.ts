@@ -1,8 +1,10 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
+import { JwtService } from "@nestjs/jwt";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import {AppModule} from "./app.module";
 import { JwtAuthGuard } from "./auth/jwt-auth.guard";
+import { CustomValidationPipe } from "./pipes/validation.pipe";
 
 
 async function start() {
@@ -10,12 +12,13 @@ async function start() {
     const app = await NestFactory.create(AppModule, {
         logger: ['log','error', 'warn', 'debug'],
     })
-    app.useGlobalPipes(new ValidationPipe({transform: true}));
+    app.useGlobalPipes(new CustomValidationPipe);
+    //app.useGlobalPipes(new ValidationPipe);
 
     const config = new DocumentBuilder()
-        .setTitle('Backend Lesson')
+        .setTitle('Health Monitoring Backend')
         .setDescription('REST API Documentation')
-        .setVersion('0.0.1')
+        .setVersion('0.0.2')
         .addTag('drngk')
         .build()
 

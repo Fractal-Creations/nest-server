@@ -1,12 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { ValidationMessage } from "src/exceptions/validation.message";
 
 export class CreateRoleDto {
-    @IsNotEmpty()
+    @IsNotEmpty({message: ValidationMessage.isEmpty})
+    @IsString({message: ValidationMessage.isString})
     @ApiProperty({example: 'ADMIN', description: 'Название роли'})
     readonly value: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message: ValidationMessage.isEmpty})
+    @IsString({message: ValidationMessage.isString})
     @ApiProperty({example: 'Администратор', description: 'Описание роли'})
     readonly description: string;
 }
