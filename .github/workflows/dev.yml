@@ -1,4 +1,4 @@
-name: ci
+name: mhph-nest-dev-ci
 on:
   push:
     branches:
