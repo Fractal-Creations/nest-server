@@ -2,7 +2,7 @@ name: ci
 on:
   push:
     branches:
-      - 'main'
+      - 'dev'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,5 +26,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-server:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:latest
   
