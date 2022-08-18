@@ -3,13 +3,12 @@ version: '3.0'
 services:
   main:
     container_name: main
+    image: drgnk/mhph-nest-dev:latest
     build:
       context: .
     env_file:
       - .docker.development.env
-    volumes:
-      - .:/app
-      - /app/node_modules
+   
     ports:
       - 5001:5001
       - 9229:9229
