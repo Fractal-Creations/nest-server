@@ -6,7 +6,7 @@ services:
     build:
       context: .
     env_file:
-      - .development.env
+      - .docker.development.env
     volumes:
       - .:/app
       - /app/node_modules
@@ -19,10 +19,10 @@ services:
     restart: always
 
   postgres:
-    container_name: postgres
+    container_name: postgress
     image: postgres:14
     env_file:
-      - .development.env
+      - .docker.development.env
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:
