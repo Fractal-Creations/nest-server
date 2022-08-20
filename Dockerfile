@@ -10,4 +10,7 @@ COPY . .
 
 COPY ./dist ./dist
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
 CMD [ "npm", "run", "start:dev"]
