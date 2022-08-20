@@ -8,9 +8,9 @@ RUN npm install
 
 COPY . .
 
+COPY ./dist ./dist
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod u+x /entrypoint.sh
-
-COPY ./dist ./dist
 
 CMD [ "npm", "run", "start:dev"]
