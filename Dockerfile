@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:12.13-alpine
 
 WORKDIR /app
 
@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
+COPY ./dist ./dist
 
 CMD [ "npm", "run", "start:dev"]
