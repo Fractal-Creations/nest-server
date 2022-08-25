@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const sequelize_1 = require("sequelize");
 const create_user_dto_1 = require("../users/dto/create-user.dto");
+const pin_code_dto_1 = require("./dto/pin-code.dto");
 const auth_service_1 = require("./auth.service");
 let AuthController = class AuthController {
     constructor(authService) {
@@ -27,6 +28,12 @@ let AuthController = class AuthController {
     }
     registration(userDto) {
         return this.authService.registration(userDto);
+    }
+    requestPinCode() {
+        return this.authService.requestPinCode();
+    }
+    validatePinCode(pinCodeDto) {
+        return this.authService.validatePinCode(pinCodeDto);
     }
 };
 __decorate([
@@ -47,6 +54,23 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "registration", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Запрос ПИН-кода' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: sequelize_1.JSON }),
+    (0, common_1.Get)('/requestPinCode'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "requestPinCode", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Проверка ПИН-кода' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: sequelize_1.JSON }),
+    (0, common_1.Get)('/validatePinCode'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [pin_code_dto_1.PinCodeDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "validatePinCode", null);
 AuthController = __decorate([
     (0, swagger_1.ApiTags)('Авторизация'),
     (0, common_1.Controller)('auth'),

@@ -9,9 +9,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
+const sequelize_1 = require("@nestjs/sequelize");
 const users_module_1 = require("../users/users.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
+const pin_code_journal_model_1 = require("./pin-code-journal.model");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -25,7 +27,8 @@ AuthModule = __decorate([
                 signOptions: {
                     expiresIn: '1d'
                 }
-            })
+            }),
+            sequelize_1.SequelizeModule.forFeature([pin_code_journal_model_1.PinCodeJournal])
         ],
         exports: [
             auth_service_1.AuthService,
