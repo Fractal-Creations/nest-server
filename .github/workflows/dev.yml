@@ -1,11 +1,12 @@
 name: mhph-nest-dev-ci
 on:
-  push:
-    branches:
-      - 'dev'
-    tags:
-      - 'v*'
-      - 'build-image'
+  workflow_dispatch:
+    push:
+      branches:
+        - 'dev'
+      tags:
+        - 'v*'
+        - 'build-image'
 jobs:
   build:
     runs-on: ubuntu-latest
