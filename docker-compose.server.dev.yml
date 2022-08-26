@@ -2,15 +2,11 @@ version: '3.0'
 
 services:
   main:
-    container_name: main
-    build:
-      context: .
+    container_name: mhph-nest-server
+    image: drgnk/mhph-nest-dev:latest
     env_file:
-      - .docker.development.env
-    entrypoint: /entrypoint.sh
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - ./main/.docker.dev.env
+
     ports:
       - 5001:5001
       - 9229:9229
@@ -23,7 +19,7 @@ services:
     container_name: postgress
     image: postgres:14
     env_file:
-      - .docker.development.env
+      - ./main/.docker.dev.env
     environment:
       PG_DATA: /var/lib/postgresql/data
     ports:

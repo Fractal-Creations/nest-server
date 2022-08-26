@@ -26,7 +26,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.actions.dev
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:buildcache
