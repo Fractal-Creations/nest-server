@@ -61,10 +61,6 @@ let AuthService = AuthService_1 = class AuthService {
             throw new common_1.HttpException('Такого ПИН-кода не существует', common_1.HttpStatus.BAD_REQUEST);
         }
         const timestampDifference = moment.utc().isAfter(moment.unix(actualPinCode.timestamp).utc().add(this.TIMEOUT, 'm'));
-        console.log(moment.unix(actualPinCode.timestamp).utc().add(this.TIMEOUT, 'm').format());
-        console.log(moment.utc().format());
-        console.log(moment.unix(actualPinCode.timestamp).utc().add(this.TIMEOUT, 'm').diff(moment.utc()));
-        console.log(moment.utc().isAfter(moment.unix(actualPinCode.timestamp).utc().add(this.TIMEOUT, 'm')));
         if (timestampDifference) {
             throw new common_1.HttpException('ПИН-код более недействителен', common_1.HttpStatus.BAD_REQUEST);
         }

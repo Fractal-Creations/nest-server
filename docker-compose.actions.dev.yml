@@ -5,7 +5,7 @@ services:
     container_name: mhph-nest-server
     build:
       context: .
-      dockerfile: .src/Dockerfile.actions.dev
+      dockerfile: ./src/Dockerfile.actions.dev
     env_file:
       - ./src/.docker.dev.env
 
