@@ -6,6 +6,7 @@ services:
     image: drgnk/mhph-nest-dev:latest
     env_file:
       - ./main/.docker.dev.env
+    entrypoint: /entrypoint.sh
 
     ports:
       - 5001:5001
