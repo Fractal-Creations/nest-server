@@ -1,0 +1,16 @@
+FROM node:12.13-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+COPY ../dist ../dist
+
+COPY ./src/entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
+CMD [ "npm", "run", "start:dev"]
