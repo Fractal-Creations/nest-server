@@ -9,18 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddRoleDto = void 0;
+exports.PinCodeDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const validation_message_1 = require("../../exceptions/validation.message");
-class AddRoleDto {
+class PinCodeDto {
 }
 __decorate([
-    (0, class_validator_1.IsNumber)({}),
+    (0, class_validator_1.IsNotEmpty)({ message: validation_message_1.ValidationMessage.isEmpty }),
+    (0, class_validator_1.IsInt)({ message: validation_message_1.ValidationMessage.isNumber }),
+    (0, swagger_1.ApiProperty)({ example: '1234', description: 'ПИН-код для аутентификации' }),
     __metadata("design:type", Number)
-], AddRoleDto.prototype, "userId", void 0);
-__decorate([
-    (0, class_validator_1.IsString)({ message: validation_message_1.ValidationMessage.isString }),
-    __metadata("design:type", String)
-], AddRoleDto.prototype, "value", void 0);
-exports.AddRoleDto = AddRoleDto;
-//# sourceMappingURL=add-role.dto.js.map
+], PinCodeDto.prototype, "pin", void 0);
+exports.PinCodeDto = PinCodeDto;
+//# sourceMappingURL=pin-code.dto.js.map
