@@ -5,6 +5,7 @@ on:
       - 'dev'
     tags:
       - 'v*'
+      - 'build-image'
 jobs:
   build:
     runs-on: ubuntu-latest
