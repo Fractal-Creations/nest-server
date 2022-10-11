@@ -24,8 +24,16 @@ let RolesService = class RolesService {
         const role = await this.roleRepository.create(dto);
         return role;
     }
+    async getAllRoles() {
+        const roles = await this.roleRepository.findAll({ include: { all: true } });
+        return roles;
+    }
     async getRoleByValue(value) {
         const role = await this.roleRepository.findOne({ where: { value } });
+        return role;
+    }
+    async getRoleById(id) {
+        const role = await this.roleRepository.findOne({ where: { id } });
         return role;
     }
 };

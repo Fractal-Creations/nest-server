@@ -7,9 +7,6 @@ export declare class AuthController {
     login(userDto: CreateUserDto): Promise<{
         token: string;
     }>;
-    registration(userDto: CreateUserDto): Promise<{
-        token: string;
-    }>;
     requestPinCode(): Promise<number>;
     validatePinCode(pinCodeDto: PinCodeDto): Promise<import("@nestjs/common").HttpStatus>;
 }

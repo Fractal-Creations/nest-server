@@ -7,9 +7,10 @@ import { UserRoles } from "./user-roles.model";
 interface RoleCreationAttrs{
     value: string;
     description: string;
+    tag: string;
 }
 
-@Table({tableName: 'roles'})
+@Table({tableName: 'roles123'})
 export class Role extends Model<Role, RoleCreationAttrs>{
 
     @ApiProperty({example: '1', description: 'Уникальный ключ'})
@@ -20,10 +21,13 @@ export class Role extends Model<Role, RoleCreationAttrs>{
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     value: string;
 
+    @ApiProperty({example: 'USER', description: 'Тип роли'})
+    @Column({type: DataType.STRING, allowNull: false})
+    tag: string;
+
     @ApiProperty({example: 'Администратор', description: 'Описание роли'})
     @Column({type: DataType.STRING, allowNull: false})
     description: string;
-
     @BelongsToMany(() => User, () => UserRoles)
     users: User[];
 

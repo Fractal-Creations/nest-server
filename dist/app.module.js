@@ -10,18 +10,17 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sequelize_1 = require("@nestjs/sequelize");
-const banned_users_model_1 = require("./users/banned-users.model");
 const users_model_1 = require("./users/users.model");
 const users_module_1 = require("./users/users.module");
 const roles_module_1 = require("./roles/roles.module");
 const roles_model_1 = require("./roles/roles.model");
 const user_roles_model_1 = require("./roles/user-roles.model");
 const auth_module_1 = require("./auth/auth.module");
+const registration_module_1 = require("./registration/registration.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        controllers: [],
         providers: [],
         imports: [
             config_1.ConfigModule.forRoot({
@@ -36,7 +35,6 @@ AppModule = __decorate([
                 database: process.env.POSTGRES_DB,
                 models: [
                     users_model_1.User,
-                    banned_users_model_1.BannedUser,
                     roles_model_1.Role,
                     user_roles_model_1.UserRoles
                 ],
@@ -45,6 +43,7 @@ AppModule = __decorate([
             users_module_1.UsersModule,
             roles_module_1.RolesModule,
             auth_module_1.AuthModule,
+            registration_module_1.RegistrationModule,
         ],
     })
 ], AppModule);

@@ -28,6 +28,9 @@ let RolesController = class RolesController {
     getByValue(value) {
         return this.roleService.getRoleByValue(value);
     }
+    getAll() {
+        return this.roleService.getAllRoles();
+    }
 };
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Добавление роли' }),
@@ -39,7 +42,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RolesController.prototype, "create", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Получение роли' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Получение сущности роли по названию' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: roles_model_1.Role }),
     (0, common_1.Get)('/:value'),
     __param(0, (0, common_1.Param)('value')),
@@ -47,6 +50,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], RolesController.prototype, "getByValue", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Получение списка ролей' }),
+    (0, swagger_1.ApiResponse)({ status: 200, type: [roles_model_1.Role] }),
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], RolesController.prototype, "getAll", null);
 RolesController = __decorate([
     (0, swagger_1.ApiTags)('Роли'),
     (0, common_1.Controller)('roles'),

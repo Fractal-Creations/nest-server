@@ -1,17 +1,17 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { BannedUser } from "./users/banned-users.model";
 import { User } from "./users/users.model";
 import { UsersModule } from "./users/users.module";
 import { RolesModule } from './roles/roles.module';
 import { Role } from "./roles/roles.model";
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
+import { RegistrationController } from './registration/registration.controller';
+import { RegistrationModule } from './registration/registration.module';
 
 
 @Module({
-    controllers: [],
     providers: [],
     imports: [
       ConfigModule.forRoot({
@@ -26,7 +26,6 @@ import { AuthModule } from './auth/auth.module';
           database: process.env.POSTGRES_DB,
           models: [
             User,
-            BannedUser,
             Role,
             UserRoles
           ],
@@ -35,6 +34,7 @@ import { AuthModule } from './auth/auth.module';
         UsersModule,
         RolesModule,
         AuthModule,
+        RegistrationModule,
       ],
 })
 export class AppModule {}

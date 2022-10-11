@@ -5,6 +5,7 @@ const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
 const validation_pipe_1 = require("./pipes/validation.pipe");
 async function start() {
+    console.log(process.env.NODE_ENV);
     const PORT = process.env.PORT || 5000;
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         logger: ['log', 'error', 'warn', 'debug'],

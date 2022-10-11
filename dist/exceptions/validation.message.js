@@ -22,6 +22,7 @@ let ValidationMessage = class ValidationMessage {
 ValidationMessage.isEmpty = 'Should not be empty';
 ValidationMessage.isEmail = 'Incorrect email';
 ValidationMessage.isString = 'Should be string';
+ValidationMessage.isBoolean = 'Should be boolean';
 ValidationMessage.isNumber = 'Should be number';
 ValidationMessage = __decorate([
     (0, common_1.Injectable)()

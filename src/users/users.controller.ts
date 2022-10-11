@@ -6,6 +6,7 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
+import { CreateResearcherUserDto } from './dto/create-researcher-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
@@ -19,8 +20,8 @@ export class UsersController {
     @ApiOperation({summary: 'Создание пользователя'})
     @ApiResponse({status: 200, type: User})
     @Post()
-    create(@Body() userDto: CreateUserDto){
-        return this.userService.createUser(userDto);
+    create(@Body() userDto: CreateResearcherUserDto){
+        return this.userService.createResearcherUser(userDto);
     }
 
     @ApiOperation({summary: 'Получить всех пользователей'})
@@ -43,13 +44,4 @@ export class UsersController {
         return this.userService.addRole(dto);
     }
 
-    @ApiOperation({summary: 'Забанить пользователя'})
-    @ApiResponse({status: 200})
-    @UseGuards(JwtAuthGuard)
-    @Roles("ADMIN")
-    @UseGuards(RolesGuard)
-    @Post('/ban')
-    ban(@Body() dto: BanUserDto) {
-        return this.userService.ban(dto);
-    }
 }

@@ -26,9 +26,6 @@ let AuthController = class AuthController {
     login(userDto) {
         return this.authService.login(userDto);
     }
-    registration(userDto) {
-        return this.authService.registration(userDto);
-    }
     requestPinCode() {
         return this.authService.requestPinCode();
     }
@@ -45,15 +42,6 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Регистрация пользователя' }),
-    (0, swagger_1.ApiResponse)({ status: 200, type: sequelize_1.JSON }),
-    (0, common_1.Post)('/registration'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", void 0)
-], AuthController.prototype, "registration", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Запрос ПИН-кода' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: sequelize_1.JSON }),

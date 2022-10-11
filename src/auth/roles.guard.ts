@@ -13,6 +13,7 @@ import {JwtService} from "@nestjs/jwt";
 import {Reflector} from "@nestjs/core";
 import {ROLES_KEY} from "./roles-auth.decorator";
 import { User } from "src/users/users.model";
+import { RoleValue } from "src/roles/roles.const";
 
 @Injectable()
 export class RolesGuard implements CanActivate {

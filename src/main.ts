@@ -3,11 +3,12 @@ import { NestFactory } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import {AppModule} from "./app.module";
-import { JwtAuthGuard } from "./auth/jwt-auth.guard";
 import { CustomValidationPipe } from "./pipes/validation.pipe";
 
 
 async function start() {
+    console.log(process.env.NODE_ENV);
+    
     const PORT = process.env.PORT || 5000
     const app = await NestFactory.create(AppModule, {
         logger: ['log','error', 'warn', 'debug'],

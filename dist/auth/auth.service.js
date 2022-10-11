@@ -67,23 +67,17 @@ let AuthService = AuthService_1 = class AuthService {
         this.logger.debug(`Success validating pin code`);
         return common_1.HttpStatus.OK;
     }
-    async registration(userDto) {
-        this.logger.debug(`Start register user ${userDto.email}`);
-        const candidate = await this.userService.getUsersByEmail(userDto.email);
-        if (candidate) {
-            this.logger.debug(`User with this email ${userDto.email} already exists!`);
-            throw new common_1.HttpException('Пользователь с таким email существует', common_1.HttpStatus.BAD_REQUEST);
-        }
-        ;
-        this.logger.debug(`Email ${userDto.email} is free`);
-        const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.userService.createUser(Object.assign(Object.assign({}, userDto), { password: hashPassword }));
-        this.logger.debug(`Register user ${userDto.email} successfull`);
-        return this._generateToken(user);
-    }
     async _generateToken(user) {
         this.logger.debug(`Start generate JWT-token`);
-        const payload = { email: user.email, id: user.id, roles: user.roles };
+        const payload = {
+            email: user.email,
+            id: user.id,
+            phone: user.phone,
+            surname: user.surname,
+            name: user.name,
+            patronymic: user.patronymic,
+            roles: user.roles
+        };
         return {
             token: await this.jwtService.signAsync(payload)
         };

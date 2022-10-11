@@ -6,4 +6,5 @@ export declare class RolesController {
     constructor(roleService: RolesService);
     create(dto: CreateRoleDto): Promise<Role>;
     getByValue(value: string): Promise<Role>;
+    getAll(): Promise<Role[]>;
 }

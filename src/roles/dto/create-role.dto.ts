@@ -12,4 +12,9 @@ export class CreateRoleDto {
     @IsString({message: ValidationMessage.isString})
     @ApiProperty({example: 'Администратор', description: 'Описание роли'})
     readonly description: string;
+
+    @IsNotEmpty({message: ValidationMessage.isEmpty})
+    @IsString({message: ValidationMessage.isString})
+    @ApiProperty({example: 'SPEC', description: 'Тип роли'})
+    readonly tag: string;
 }

@@ -27,6 +27,11 @@ __decorate([
     __metadata("design:type", String)
 ], Role.prototype, "value", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({ example: 'USER', description: 'Тип роли' }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
+    __metadata("design:type", String)
+], Role.prototype, "tag", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ example: 'Администратор', description: 'Описание роли' }),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", String)
@@ -36,7 +41,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Role.prototype, "users", void 0);
 Role = __decorate([
-    (0, sequelize_typescript_1.Table)({ tableName: 'roles' })
+    (0, sequelize_typescript_1.Table)({ tableName: 'roles123' })
 ], Role);
 exports.Role = Role;
 //# sourceMappingURL=roles.model.js.map

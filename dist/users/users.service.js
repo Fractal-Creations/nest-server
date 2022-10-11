@@ -24,6 +24,16 @@ let UsersService = UsersService_1 = class UsersService {
         this.roleService = roleService;
         this.logger = new common_1.Logger(UsersService_1.name);
     }
+    async createResearcherUser(dto) {
+        const role = await this.roleService.getRoleById(dto.idRole);
+        if (!role) {
+            throw new common_1.HttpException(`Роль не существует`, common_1.HttpStatus.BAD_REQUEST);
+        }
+        const user = await this.userRepository.create(dto);
+        const userWith = await user.$set('roles', [role.id]);
+        user.roles = [role];
+        return user;
+    }
     async createUser(dto) {
         const role = await this.roleService.getRoleByValue('USER');
         if (!role) {
@@ -46,16 +56,6 @@ let UsersService = UsersService_1 = class UsersService {
             return dto;
         }
         throw new common_1.HttpException('Пользователь или роль не найдены', common_1.HttpStatus.NOT_FOUND);
-    }
-    async ban(dto) {
-        const user = await this.userRepository.findByPk(dto.userId);
-        if (!user) {
-            throw new common_1.HttpException('Пользователь не найден', common_1.HttpStatus.NOT_FOUND);
-        }
-        user.banned = true;
-        user.banReason = dto.banReason;
-        await user.save();
-        return user;
     }
     async getUsersByEmail(email) {
         this.logger.debug(`Find user with email ${email}`);

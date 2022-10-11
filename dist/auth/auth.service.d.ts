@@ -18,9 +18,6 @@ export declare class AuthService {
     }>;
     requestPinCode(): Promise<number>;
     validatePinCode(pinCodeDto: PinCodeDto): Promise<HttpStatus>;
-    registration(userDto: CreateUserDto): Promise<{
-        token: string;
-    }>;
     private _generateToken;
     private _validateUser;
     private _generateRandomNumber;

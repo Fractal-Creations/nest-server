@@ -16,10 +16,17 @@ export class RolesController {
         return this.roleService.createRole(dto);
     }
 
-    @ApiOperation({summary: 'Получение роли'})
+    @ApiOperation({summary: 'Получение сущности роли по названию'})
     @ApiResponse({status: 200, type: Role})
     @Get('/:value')
     getByValue(@Param('value') value: string){
         return this.roleService.getRoleByValue(value);
+    }
+
+    @ApiOperation({summary: 'Получение списка ролей'})
+    @ApiResponse({status: 200, type: [Role]})
+    @Get()
+    getAll(){
+        return this.roleService.getAllRoles();
     }
 }

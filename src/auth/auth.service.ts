@@ -72,24 +72,17 @@ export class AuthService {
       
       return HttpStatus.OK;
     }
-  
-    async registration(userDto: CreateUserDto) {
-        this.logger.debug(`Start register user ${userDto.email}`)
-        const candidate = await this.userService.getUsersByEmail(userDto.email);
-        if(candidate){
-            this.logger.debug(`User with this email ${userDto.email} already exists!`)
-            throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
-        };
-        this.logger.debug(`Email ${userDto.email} is free`)
-        const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.userService.createUser({...userDto, password: hashPassword});
-        this.logger.debug(`Register user ${userDto.email} successfull`)
-        return this._generateToken(user);
-    }
 
     private async _generateToken(user: User){
         this.logger.debug(`Start generate JWT-token`)
-        const payload = {email: user.email, id: user.id, roles: user.roles};
+        const payload = {
+          email: user.email, 
+          id: user.id, 
+          phone: user.phone,
+          surname: user.surname,
+          name: user.name,
+          patronymic: user.patronymic,
+          roles: user.roles};
         return {
             token: await this.jwtService.signAsync(payload)
         }

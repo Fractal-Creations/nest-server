@@ -27,5 +27,11 @@ __decorate([
     (0, swagger_1.ApiProperty)({ example: 'Администратор', description: 'Описание роли' }),
     __metadata("design:type", String)
 ], CreateRoleDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: validation_message_1.ValidationMessage.isEmpty }),
+    (0, class_validator_1.IsString)({ message: validation_message_1.ValidationMessage.isString }),
+    (0, swagger_1.ApiProperty)({ example: 'SPEC', description: 'Тип роли' }),
+    __metadata("design:type", String)
+], CreateRoleDto.prototype, "tag", void 0);
 exports.CreateRoleDto = CreateRoleDto;
 //# sourceMappingURL=create-role.dto.js.map
