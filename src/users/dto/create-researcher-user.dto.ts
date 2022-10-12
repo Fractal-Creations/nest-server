@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsEmail, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Length } from "class-validator";
+import { IsDate, IsDateString, IsEmail, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Length } from "class-validator";
 import { ValidationMessage } from "src/exceptions/validation.message";
 
 export class CreateResearcherUserDto{
@@ -32,12 +32,12 @@ export class CreateResearcherUserDto{
 
     @IsNumber({},{message: ValidationMessage.isNumber})
     @IsNotEmpty({message: ValidationMessage.isEmpty})
-    @ApiProperty({example: '1', description: 'id роли'})
+    @ApiProperty({example: '1',  description: 'id роли'})
     readonly idRole: number;
 
-    @IsDate({message: ValidationMessage.isString})
+    @IsDateString()
     @IsNotEmpty({message: ValidationMessage.isEmpty})
-    @ApiProperty({example: new Date('16-12-1994'), description: 'Дата рождения'})
+    @ApiProperty({example: new Date('1994-12-16'), description: 'Дата рождения'})
     readonly birthDate: Date;
 
 

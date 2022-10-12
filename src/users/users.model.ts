@@ -9,7 +9,7 @@ interface UserCreationAttrs{
     phone: string,
 }
 
-@Table({tableName: 'users2'})
+@Table({tableName: 'users'})
 export class User extends Model<User, UserCreationAttrs>{
 
     @ApiProperty({example: '1', description: 'Уникальный ключ'})
@@ -27,10 +27,10 @@ export class User extends Model<User, UserCreationAttrs>{
     @ApiProperty({example: 'Иванович', description: 'Отчество'})
     @Column({type: DataType.STRING, allowNull: true})
     readonly patronymic: string;
-/* 
-    @ApiProperty({ description: 'Дата рождения'})
+
+    @ApiProperty({example: new Date('1994-12-16'), description: 'Дата рождения'})
     @Column({type: DataType.DATEONLY})
-    readonly birthDate: Date; */
+    readonly birthDate: Date;
 
     @ApiProperty({example: 'Москва', description: 'Родной город'})
     @Column({type: DataType.STRING, allowNull: true})

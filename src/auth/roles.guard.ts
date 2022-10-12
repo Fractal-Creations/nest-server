@@ -14,6 +14,7 @@ import {Reflector} from "@nestjs/core";
 import {ROLES_KEY} from "./roles-auth.decorator";
 import { User } from "src/users/users.model";
 import { RoleValue } from "src/roles/roles.const";
+import { log } from "console";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -26,15 +27,17 @@ export class RolesGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         this.logger.debug('Start check JWT-token')
         try {
-            const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+            const requiredRoles = this.reflector.getAllAndOverride<RoleValue[]>(ROLES_KEY, [
                 context.getHandler(),
                 context.getClass(),
             ])
+            log(requiredRoles)
             if (!requiredRoles) {
                 return true;
             }
             const req = context.switchToHttp().getRequest();
             const authHeader = req.headers.authorization;
+            log(authHeader)
             const bearer = authHeader.split(' ')[0]
             const token = authHeader.split(' ')[1]
 

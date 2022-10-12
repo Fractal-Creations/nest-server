@@ -32,7 +32,7 @@ export class CreateExaminedrUserDto{
 
     @IsDate({message: ValidationMessage.isString})
     @IsNotEmpty({message: ValidationMessage.isEmpty})
-    @ApiProperty({example: new Date('16-12-1994'), description: 'Дата рождения'})
+    @ApiProperty({example: new Date('1994-12-16'), description: 'Дата рождения'})
     readonly birthDate: Date;
 
     @IsString({message: ValidationMessage.isString})

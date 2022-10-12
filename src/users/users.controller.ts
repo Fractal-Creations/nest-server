@@ -1,17 +1,18 @@
 import { Body, Controller, Get, Post, UseGuards, UsePipes } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { log, timeStamp } from 'console';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { RoleValue } from 'src/roles/roles.const';
 import { AddRoleDto } from './dto/add-role.dto';
-import { BanUserDto } from './dto/ban-user.dto';
 import { CreateResearcherUserDto } from './dto/create-researcher-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
 
 @ApiTags('Пользователи')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
 
@@ -24,20 +25,20 @@ export class UsersController {
         return this.userService.createResearcherUser(userDto);
     }
 
-    @ApiOperation({summary: 'Получить всех пользователей'})
+    @ApiOperation({summary: 'Получить список всех пользователей'})
     @ApiResponse({status: 200, type: [User]})
     @UseGuards(JwtAuthGuard)
-    @Roles('ADMIN')
+    @Roles(RoleValue.ADMIN, RoleValue.DOC_SPEC, RoleValue.SUPER_USER)
     @UseGuards(RolesGuard)
     @Get()
     getAll(){
         return this.userService.getAllUsers();
     }
 
-    @ApiOperation({summary: 'Выдать роль'})
+    @ApiOperation({summary: 'Присвоить роль пользователю'})
     @ApiResponse({status: 200})
     @UseGuards(JwtAuthGuard)
-    @Roles('ADMIN')
+    @Roles(RoleValue.ADMIN, RoleValue.DOC_SPEC, RoleValue.SUPER_USER)
     @UseGuards(RolesGuard)
     @Post('/role')
     addRole(@Body() dto: AddRoleDto){

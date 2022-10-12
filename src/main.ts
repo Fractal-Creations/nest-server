@@ -19,9 +19,10 @@ async function start() {
     const config = new DocumentBuilder()
         .setTitle('Health Monitoring Backend')
         .setDescription('REST API Documentation')
-        .setVersion('0.0.2')
-        .addTag('drngk')
+        .setVersion('0.0.3')
+        .addBearerAuth()
         .build()
+        
 
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('api/docs', app, document)
