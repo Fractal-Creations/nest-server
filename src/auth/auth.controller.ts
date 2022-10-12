@@ -25,12 +25,7 @@ export class AuthController {
         return this.authService.login(userDto)
     }
 
-    @ApiOperation({summary: 'Регистрация пользователя'})
-    @ApiResponse({status: 200, type: JSON})
-    @Post('/registration')
-    registration(@Body() userDto: CreateUserDto){
-        return this.authService.registration(userDto)
-    }
+   
   
     @ApiOperation({summary: 'Запрос ПИН-кода'})
     @ApiResponse({status: 200, type: JSON})
