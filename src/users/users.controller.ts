@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, UseGuards, UsePipes } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpException, Param, Post, Query, Req, UseGuards, UsePipes } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { log, timeStamp } from 'console';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
@@ -16,7 +17,7 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
 
-    constructor(private userService: UsersService){}
+    constructor(private userService: UsersService, private jwtService: JwtService){}
 
     @ApiOperation({summary: 'Создание пользователя'})
     @ApiResponse({status: 200, type: User})
@@ -33,6 +34,25 @@ export class UsersController {
     @Get()
     getAll(){
         return this.userService.getAllUsers();
+    }
+
+    @ApiOperation({summary: 'Получить профиль пользователя'})
+    @ApiResponse({status: 200, type: User})
+    @ApiParam({
+        name: "id",
+        example: 5,
+        type: Number,
+        description: "ID пользователя. Если не указан, то берется ID из токена",
+        required: false,
+        allowEmptyValue: true,
+      })
+    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    getUserProfile(@Req() request: Request, @Param('id') id?: number){
+   
+            return this.userService.getUserById(id);
+
+       
     }
 
     @ApiOperation({summary: 'Присвоить роль пользователю'})

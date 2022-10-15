@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from 'src/roles/roles.service';
 import { AddRoleDto } from './dto/add-role.dto';
@@ -43,6 +44,14 @@ export class UsersService {
         return users;
     }
 
+    async  getUserById(idUser: number){
+        const user = await this.userRepository.findByPk(idUser);
+        if (user){
+            return user;
+        }
+        throw new HttpException(`Пользователь не существует`, HttpStatus.BAD_REQUEST);
+    }
+
     async addRole(dto: AddRoleDto) {
         const user = await this.userRepository.findByPk(dto.idUser);
         const role = await this.roleService.getRoleById(dto.idRole);
@@ -50,7 +59,8 @@ export class UsersService {
             await user.$add('roles', role);
             return role;
         }
-        throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
+        throw new HttpException('Пользователь или роль не найдены', HttpStatus.BAD_REQUEST
+        );
     }
 
 

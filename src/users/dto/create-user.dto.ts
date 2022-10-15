@@ -6,13 +6,13 @@ export class CreateUserDto{
 
     @IsString({message: ValidationMessage.isString})
     @IsEmail({},{message: ValidationMessage.isEmail})
-    @ApiProperty({example: 'user@mail.ru', description: 'Почтовый адрес'})
+    @ApiProperty({example: 'an.tyrtyshnikov@gmail.com', description: 'Адрес электронной почты'})
     readonly email: string;
 
     @IsString({message: ValidationMessage.isString})
     @IsNotEmpty({message: ValidationMessage.isEmpty})
     @Length(4, 16, {message: ValidationMessage.lenght(4,16)})
-    @ApiProperty({example: '1234', description: 'Пароль'})
+    @ApiProperty({example: 'sudo', description: 'Пароль'})
     readonly password: string;
     
 }
