@@ -1,14 +1,12 @@
-import { Body, Controller, Get, HttpException, Param, Post, Query, Req, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get,  Param, Post, UseGuards} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { log, timeStamp } from 'console';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { RoleValue } from 'src/roles/roles.const';
 import { AddRoleDto } from './dto/add-role.dto';
 import { CreateResearcherUserDto } from './dto/create-researcher-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
 
@@ -45,11 +43,11 @@ export class UsersController {
         description: "ID пользователя. Если не указан, то берется ID из токена",
         required: false,
         allowEmptyValue: true,
-        
+
     })
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    getUserProfile(@Req() request: Request, @Param('id') id?: number) {
+    getUserProfile( @Param('id') id?: number) {
         return this.userService.getUserById(id);
     }
 
