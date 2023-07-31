@@ -1,4 +1,4 @@
-import { Body, Controller, Get,  Param, Post, UseGuards} from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get,  Param, Post, UseGuards, UseInterceptors} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -6,9 +6,10 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { RoleValue } from 'src/roles/roles.const';
 import { AddRoleDto } from './dto/add-role.dto';
-import { CreateResearcherUserDto } from './dto/create-researcher-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
 import { UsersService } from './users.service';
+import { UUIDV4 } from 'sequelize';
 
 @ApiTags('Пользователи')
 @ApiBearerAuth()
@@ -20,8 +21,8 @@ export class UsersController {
     @ApiOperation({ summary: 'Создание пользователя' })
     @ApiResponse({ status: 200, type: User })
     @Post()
-    create(@Body() userDto: CreateResearcherUserDto) {
-        return this.userService.createResearcherUser(userDto);
+    create(@Body() userDto: CreateUserDto) {
+        return this.userService.createUser(userDto);
     }
 
     @ApiOperation({ summary: 'Получить список всех пользователей' })
@@ -33,13 +34,13 @@ export class UsersController {
     getAll() {
         return this.userService.getAllUsers();
     }
-
+    
     @ApiOperation({ summary: 'Получить профиль пользователя' })
     @ApiResponse({ status: 200, type: User })
     @ApiParam({
         name: "id",
         example: 5,
-        type: Number,
+        type: UUIDV4,
         description: "ID пользователя. Если не указан, то берется ID из токена",
         required: false,
         allowEmptyValue: true,
@@ -47,7 +48,7 @@ export class UsersController {
     })
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    getUserProfile( @Param('id') id?: number) {
+    getUserProfile( @Param('id') id?: string) {
         return this.userService.getUserById(id);
     }
 

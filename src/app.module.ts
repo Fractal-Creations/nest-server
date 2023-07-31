@@ -7,8 +7,9 @@ import { RolesModule } from './roles/roles.module';
 import { Role } from "./roles/roles.model";
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
-import { RegistrationController } from './registration/registration.controller';
-import { RegistrationModule } from './registration/registration.module';
+import { SurveysModule } from "./surveys/surveys.module";
+
+import { HealthIndicatorsModule } from './health-indicators/health-indicators.module';
 
 
 @Module({
@@ -34,7 +35,8 @@ import { RegistrationModule } from './registration/registration.module';
         UsersModule,
         RolesModule,
         AuthModule,
-        RegistrationModule,
+        SurveysModule,
+        HealthIndicatorsModule,
       ],
 })
 export class AppModule {}

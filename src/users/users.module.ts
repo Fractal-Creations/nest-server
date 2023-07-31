@@ -8,6 +8,7 @@ import { RolesService } from 'src/roles/roles.service';
 import { UsersController } from './users.controller';
 import { User } from './users.model';
 import { UsersService } from './users.service';
+import { SurveysModule } from 'src/surveys/surveys.module';
 
 @Module({
   controllers: [UsersController],

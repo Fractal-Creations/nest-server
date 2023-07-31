@@ -1,17 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString, IsInt, IsPhoneNumber } from "class-validator";
+import { IsEmail, IsInt, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Length } from "class-validator";
+import { Max } from "sequelize-typescript";
 import { ValidationMessage } from "src/exceptions/validation.message";
 
-export class PinCodeDto {
-    @IsNotEmpty({message: ValidationMessage.isEmpty})
+export class LoginUserDto {
+
     @IsPhoneNumber('RU')
-    @ApiProperty({example: '+79990001122', description: 'Номер телефона'})
-     phoneNumber: string;
+    @ApiProperty({ example: '+79998227390', description: 'Номер телефона' })
+    readonly phone: string;
 
     @IsNotEmpty({message: ValidationMessage.isEmpty})
     @IsInt({message: ValidationMessage.isNumber})
     @ApiProperty({example: '1234', description: 'ПИН-код для аутентификации'})
-     pin: number;
+    readonly pin: number;
 
-   
 }

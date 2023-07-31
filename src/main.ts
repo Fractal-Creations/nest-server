@@ -13,7 +13,7 @@ async function start() {
     const app = await NestFactory.create(AppModule, {
         logger: ['log', 'error', 'warn', 'debug'],
     });
-    app.useGlobalPipes(new CustomValidationPipe)
+    app.useGlobalPipes(new ValidationPipe)
         .enableCors({
             origin: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
