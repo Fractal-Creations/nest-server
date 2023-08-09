@@ -8,7 +8,7 @@ export class SurveyHealthIndicators extends Model<SurveyHealthIndicators>{
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID' })
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true })
-    readonly id: string;
+    readonly id: String;
 
     @ForeignKey(()=> HealthIndicator)
     @Column({type: DataType.UUIDV4, allowNull: false})

@@ -61,6 +61,6 @@ export class HealthIndicator extends Model<HealthIndicator, HealthIndicatorCreat
 
     @ApiProperty({type: [Survey], description: 'Список опросников, в которые входит данный показатель', nullable: true})
     @IsOptional()
-    @BelongsToMany(() => Survey, () => SurveyHealthIndicators, 'surveyId')
+    @BelongsToMany(() => Survey, () => SurveyHealthIndicators)
     surveys?: Array<Survey & {SurveyHealthIndicators: SurveyHealthIndicators}>;
 }

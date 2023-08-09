@@ -30,7 +30,7 @@ export class MeasureInfo extends Model<MeasureInfo, MeasureInfoCreationAttrs>{
     @Column({type: DataType.STRING, allowNull: true})
     comment?: string;
 
-    @BelongsToMany(() => HealthIndicator, () => HealthIndicatorMeasureTypes, 'healthIndicatorId')
+    @BelongsToMany(() => HealthIndicator, () => HealthIndicatorMeasureTypes)
      indicators?: HealthIndicator[] ;
 
     @BelongsToMany(() => MeasureMetric, () => MeasureInfoMetrics)
