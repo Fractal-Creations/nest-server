@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   main:
-    container_name: mhph-nest-server
+    container_name: svt-nest-server
     build:
       context: .
       dockerfile: ./src/Dockerfile.actions.dev
@@ -11,8 +11,8 @@ services:
     entrypoint: /entrypoint.sh
 
     ports:
-      - 5001:5001
-      - 9229:9229
+      - 5003:5003
+      - 9228:9228
     command: npm run start:dev
     depends_on:
       - postgres
