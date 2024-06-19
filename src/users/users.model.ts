@@ -1,38 +1,60 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { classToPlain, Exclude, instanceToPlain } from "class-transformer";
 import { BelongsToMany, Column, DataType, HasOne, Model, Table } from "sequelize-typescript";
+import { DataTypes, Sequelize, UUIDV4 } from "sequelize/types";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
-import { BannedUser } from "./banned-users.model";
+import { GenderEnum as GenderEnum } from "./users.const";
 
 interface UserCreationAttrs{
-    email: string;
-    password: string;
+    surname: string,
+    name: string,
+    phone: string,
 }
 
 @Table({tableName: 'users'})
 export class User extends Model<User, UserCreationAttrs>{
 
-    @ApiProperty({example: '1', description: 'Уникальный ключ'})
-    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
-    id?: number;
+    @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID'})
+    @Column({type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true})
+    readonly id: String;
 
-    @ApiProperty({example: 'user@mail.ru', description: 'Уникальный идентификатор'})
+    @ApiProperty({example: 'Иванов', description: 'Фамилия'})
+    @Column({type: DataType.STRING})
+    readonly surname: string;
+
+    @ApiProperty({example: 'Иван', description: 'Имя'})
+    @Column({type: DataType.STRING})
+    readonly name: string;
+
+    @ApiProperty({example: 'Иванович', description: 'Отчество'})
+    @Column({type: DataType.STRING, allowNull: true})
+    readonly patronymic?: string;
+
+    @ApiProperty({example: GenderEnum.MALE, description: 'Пол'})
+    @Column({type: DataType.STRING})
+    readonly gender: string;
+
+    @ApiProperty({example: new Date('1994-12-16'), description: 'Дата рождения'})
+    @Column({type: DataType.DATEONLY})
+    readonly birthDate: Date;
+
+    @ApiProperty({example: 'Москва', description: 'Родной город'})
+    @Column({type: DataType.STRING, allowNull: true})
+    readonly city?: string;
+
+    @ApiProperty({example: true, description: 'Коренной житель'})
+    @Column({type: DataType.BOOLEAN, allowNull: true})
+    readonly isNative?: boolean;
+
+    @ApiProperty({example: '+79990001122', description: 'Номер телефона'})
+    @Column({type: DataType.STRING, unique: true})
+    phone: string;
+
+    @ApiProperty({example: 'user@mail.ru', description: 'Электронная почта'})
     @Column({type: DataType.STRING, unique: true, allowNull: true})
     email: string;
 
-    @ApiProperty({example: '12345', description: 'Пароль'})
-    @Column({type: DataType.STRING, allowNull: false})
-    password: string;
-
-    @ApiProperty({example: 'true', description: 'Забанен или нет'})
-    @Column({type: DataType.BOOLEAN, defaultValue: false})
-    banned: boolean;
-
-    @ApiProperty({example: 'За хулиганство', description: 'Причина бана'})
-    @Column({type: DataType.STRING, allowNull: true})
-    banReason: string;
-
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
-
 }

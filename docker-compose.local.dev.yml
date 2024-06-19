@@ -13,8 +13,8 @@ services:
       - .:/app
       - /app/node_modules
     ports:
-      - 5001:5001
-      - 9229:9229
+      - 5003:5003
+      - 9228:9228
     command: npm run start:dev
     depends_on:
       - postgres

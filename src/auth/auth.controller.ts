@@ -7,10 +7,12 @@ import { JSONB } from 'sequelize/types';
 
 import { Role } from 'src/roles/roles.model';
 
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+
 import { PinCodeDto } from 'src/auth/dto/pin-code.dto';
 
 import { AuthService } from './auth.service';
+import { LoginUserDto } from 'src/users/dto/login-user.dto';
+import { PhoneNumberDto } from './dto/phone-number.dto';
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -21,28 +23,21 @@ export class AuthController {
     @ApiOperation({summary: 'Авторизация пользователя'})
     @ApiResponse({status: 200, type: JSON})
     @Post('/login')
-    login(@Body() userDto: CreateUserDto){
+    login(@Body() userDto: LoginUserDto){
         return this.authService.login(userDto)
     }
 
-    @ApiOperation({summary: 'Регистрация пользователя'})
-    @ApiResponse({status: 200, type: JSON})
-    @Post('/registration')
-    registration(@Body() userDto: CreateUserDto){
-        return this.authService.registration(userDto)
-    }
-  
     @ApiOperation({summary: 'Запрос ПИН-кода'})
-    @ApiResponse({status: 200, type: JSON})
-    @Get('/requestPinCode')
-    requestPinCode(){
-      return this.authService.requestPinCode()
+    @ApiResponse({status: 200, type: PinCodeDto})
+    @Post('/requestPinCode')
+    requestPinCode(@Body() phoneNumberDto: PhoneNumberDto){
+      return this.authService.requestPinCode(phoneNumberDto.phoneNumber)
     }
 
     @ApiOperation({summary: 'Проверка ПИН-кода'})
     @ApiResponse({status: 200, type: JSON})
-    @Get('/validatePinCode')
+    @Post('/validatePinCode')
     validatePinCode(@Body() pinCodeDto: PinCodeDto){
-      return this.authService.validatePinCode(pinCodeDto)
+      return this.authService.validatePinCode(pinCodeDto.pin, pinCodeDto.phoneNumber)
     }
 }
