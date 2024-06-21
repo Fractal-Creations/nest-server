@@ -3,12 +3,16 @@ import { BelongsToMany, Column, DataType, ForeignKey, Model, Table } from "seque
 import { SurveyHealthIndicators } from "./survey-health-indicators.model";
 import { HealthIndicator } from "src/health-indicators/models/health-indicator.model";
 
+interface SurveyCreationAttrs {
+    title: string;
+    indicators?: string[];
+}
 @Table({tableName: 'surveys', createdAt: false, updatedAt: false})
-export class Survey extends Model<Survey>{
+export class Survey extends Model<Survey, SurveyCreationAttrs>{
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID' })
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true })
-    readonly id: String;
+    readonly id: string;
 
     @ApiProperty({example: 'Стандартный спортивный мониторинг', description: 'Название мониторинга'})
     @Column({type: DataType.STRING, allowNull: false})
@@ -16,7 +20,7 @@ export class Survey extends Model<Survey>{
     
 
     @ApiProperty({type: [HealthIndicator], description: 'Список показателей, прикрепленных к данному опроснику'})
-    @BelongsToMany(() => HealthIndicator, () => SurveyHealthIndicators, 'healthIndicatorId')
+    @BelongsToMany(() => HealthIndicator, () => SurveyHealthIndicators)
      indicators?: Array<HealthIndicator & {SurveyHealthIndicators: SurveyHealthIndicators}>;
 
 }

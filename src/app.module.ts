@@ -7,9 +7,10 @@ import { RolesModule } from './roles/roles.module';
 import { Role } from "./roles/roles.model";
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
-import { SurveysModule } from "./surveys/surveys.module";
-
 import { HealthIndicatorsModule } from './health-indicators/health-indicators.module';
+import { SurveysModule } from './surveys/surveys.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
+import { AnswersModule } from './answers/answers.module';
 
 
 @Module({
@@ -37,6 +38,8 @@ import { HealthIndicatorsModule } from './health-indicators/health-indicators.mo
         AuthModule,
         SurveysModule,
         HealthIndicatorsModule,
+        MonitoringModule,
+        AnswersModule,
       ],
 })
 export class AppModule {}

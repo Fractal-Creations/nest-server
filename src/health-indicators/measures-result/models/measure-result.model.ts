@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Model, Column, DataType, Table, BelongsTo, ForeignKey, HasOne } from "sequelize-typescript";
-import { Answer } from "./answers.model";
+import { Answer } from "../../../answers/models/answers.model";
 import { MeasureInfo } from "../../measures-info/models/measure-info.model";
 
 
@@ -10,8 +10,16 @@ export class MeasureResult extends Model<MeasureResult>{
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true })
     readonly id: String;
 
-    @HasOne(() => MeasureInfo, 'id')
-    measureType: MeasureInfo;
+    @BelongsTo(() => MeasureInfo)
+    measureInfo: MeasureInfo;
+
+    @ForeignKey(() => MeasureInfo)
+    @Column({
+        type: DataType.UUID,
+        allowNull: false,
+        
+    })
+    measureInfoId: string;
     
     @BelongsTo(() => Answer)
     answer: Answer;

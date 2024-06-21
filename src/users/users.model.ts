@@ -1,10 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { classToPlain, Exclude, instanceToPlain } from "class-transformer";
-import { BelongsToMany, Column, DataType, HasOne, Model, Table } from "sequelize-typescript";
+import { BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 import { DataTypes, Sequelize, UUIDV4 } from "sequelize/types";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
 import { GenderEnum as GenderEnum } from "./users.const";
+import { Monitoring } from "src/monitoring/models/monitoring.model";
 
 interface UserCreationAttrs{
     surname: string,
@@ -47,6 +48,7 @@ export class User extends Model<User, UserCreationAttrs>{
     @Column({type: DataType.BOOLEAN, allowNull: true})
     readonly isNative?: boolean;
 
+
     @ApiProperty({example: '+79990001122', description: 'Номер телефона'})
     @Column({type: DataType.STRING, unique: true})
     phone: string;
@@ -57,4 +59,11 @@ export class User extends Model<User, UserCreationAttrs>{
 
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
+
+    @BelongsToMany(() => Role, () => UserRoles)
+    monitorings?: Role[];
+
+   /*  @ApiProperty({example: [Monitoring], description: 'Список мониторингов пациента'})
+    @HasMany(() => Monitoring)
+     monitorings?: Monitoring[]; */
 }

@@ -12,14 +12,11 @@ export class CreateHealthIndicatorDto {
     @ApiProperty({example: CharacteristicType.fr, description: 'Физическое развитие (fr) / Физическая подготовленность (fp)'})
     readonly characteristicType: CharacteristicType;
 
-    @ApiProperty({ example: 'Пульс стабильный, ритмичный', description: 'Первый вариант ответа (3 балла)' })
-    readonly firstAnswerVariant: string;
+    @ApiProperty({example: ['Пульс стабильный, ритмичный', 'Пульс не стабильный, не ритмичный',  'Пульс отсутствует'], description: 'Варианты ответа для мужчин'})
+    readonly mensAnswerVariants: string[];
 
-    @ApiProperty({ example: 'Пульс не стабильный, не ритмичный', description: 'Второй вариант ответа (2 балла)' })
-    readonly secondAnswerVariant: string;
-
-    @ApiProperty({ example: 'Пульс отсутствует', description: 'Третий вариант ответа (1 балл)' })
-    readonly thirdAnswerVariant: string;
+    @ApiProperty({example: ['Пульс стабильный, ритмичный', 'Пульс не стабильный, не ритмичный',  'Пульс отсутствует'], description: 'Варианты ответа для женщин'})
+    readonly womensAnswerVariants: string[];
 
     @ApiProperty({ example: 'Оцените характер пульса', description: 'Описание показателя', nullable: true , required: false})
     @IsOptional()

@@ -6,13 +6,14 @@ import { IsOptional } from "class-validator";
 import { CharacteristicType } from "../health-indicators.enum";
 import { Survey } from "src/surveys/models/survey.model";
 import { SurveyHealthIndicators } from "src/surveys/models/survey-health-indicators.model";
+import { AnswerVariant } from "./answer-variants.model";
+import { Answer } from "src/answers/models/answers.model";
 
 interface HealthIndicatorCreationAttrs {
     title: string;
     characteristicType: CharacteristicType
-    firstAnswerVariant: string;
-    secondAnswerVariant: string;
-    thirdAnswerVariant: string;
+    mensAnswerVariants: string[];
+    womensAnswerVariants: string[];
     description?: string;
     comment?: string;
     measures?: string[];
@@ -32,17 +33,11 @@ export class HealthIndicator extends Model<HealthIndicator, HealthIndicatorCreat
     @Column({type: DataType.ENUM, values: Object.values(CharacteristicType), allowNull: false})
     characteristicType: CharacteristicType;
 
-    @ApiProperty({example: 'Пульс стабильный, ритмичный', description: 'Первый вариант ответа (3 балла)'})
-    @Column({type: DataType.STRING, allowNull: false})
-    firstAnswerVariant: string;
+    @ApiProperty({type: [AnswerVariant], description: 'Список вариантов ответа для данного показателя', nullable: true})
+    @IsOptional()
+    @HasMany(() => AnswerVariant)
+    answerVariants?: Array<AnswerVariant>;
 
-    @ApiProperty({example: 'Пульс не стабильный, не ритмичный', description: 'Второй вариант ответа (2 балла)'})
-    @Column({type: DataType.STRING, allowNull: false})
-    secondAnswerVariant: string;
-
-    @ApiProperty({example: 'Пульс отсутствует', description: 'Третий вариант ответа (1 балл)'})
-    @Column({type: DataType.STRING, allowNull: false})
-    thirdAnswerVariant: string;
 
     @ApiProperty({example: 'Оцените характер пульса', description: 'Описание показателя', nullable: true})
     @IsOptional()
@@ -61,6 +56,6 @@ export class HealthIndicator extends Model<HealthIndicator, HealthIndicatorCreat
 
     @ApiProperty({type: [Survey], description: 'Список опросников, в которые входит данный показатель', nullable: true})
     @IsOptional()
-    @BelongsToMany(() => Survey, () => SurveyHealthIndicators, 'surveyId')
+    @BelongsToMany(() => Survey, () => SurveyHealthIndicators)
     surveys?: Array<Survey & {SurveyHealthIndicators: SurveyHealthIndicators}>;
 }
