@@ -13,12 +13,15 @@ services:
       - .:/app
       - /app/node_modules
     ports:
-      - 5003:5003
+      - 5001:5001
       - 9228:9228
     command: npm run start:dev
     depends_on:
       - postgres
     restart: always
+    # https://stackoverflow.com/a/52989931
+    networks:
+        - dockernet
 
   postgres:
     container_name: postgress
@@ -32,6 +35,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+    # https://stackoverflow.com/a/52989931
+    networks:
+        - dockernet
 
 volumes:
   pgdata:
+
+# https://stackoverflow.com/a/52989931
+networks:
+    dockernet:

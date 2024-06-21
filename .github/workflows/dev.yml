@@ -1,4 +1,4 @@
-name: svt-nest-dev-ci
+name: mhph-nest-dev-ci
 on:
   workflow_dispatch:
     push:
@@ -30,9 +30,9 @@ jobs:
           context: .
           file: ./src/Dockerfile.actions.dev
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/svt-nest-dev:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/svt-nest-dev:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/svt-nest-dev:buildcache,mode=max
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/mhph-nest-dev:buildcache,mode=max
           
   deploy:
     runs-on: ubuntu-latest   
@@ -53,9 +53,9 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             echo "Pull new image"
-            docker-compose -f /home/${{ secrets.VPS_SSH_USERNAME }}/svt-docker-dev-deploy/docker-compose.yml pull
+            docker-compose -f /home/${{ secrets.VPS_SSH_USERNAME }}/mhph-docker-dev-deploy/docker-compose.yml pull
             echo "Restart the container"
-            docker-compose -f /home/${{ secrets.VPS_SSH_USERNAME }}/svt-docker-dev-deploy/docker-compose.yml up --force-recreate --build --no-deps -d
+            docker-compose -f /home/${{ secrets.VPS_SSH_USERNAME }}/mhph-docker-dev-deploy/docker-compose.yml up --force-recreate --build --no-deps -d
             echo "Delete old image"
             docker image prune -f
   

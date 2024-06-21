@@ -89,7 +89,7 @@
 		},
 		{
 			"key": "port",
-			"value": "5003",
+			"value": "5001",
 			"type": "default"
 		}
 	]
