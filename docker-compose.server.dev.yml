@@ -2,20 +2,20 @@ version: '3.0'
 
 services:
   main:
-    container_name: svt-nest-server
-    image: drgnk/svt-nest-dev:latest
+    container_name: mhph-nest-server
+    image: drgnk/mhph-nest-dev:latest
     env_file:
       - ./main/.docker.dev.env
     entrypoint: /entrypoint.sh
 
     ports:
-      - 5003:5003
-      - 9228:9228
+      - 5001:5001
+      - 9229:9229
     command: npm run start:dev
     depends_on:
       - postgres
     restart: always
-   
+
 
   postgres:
     container_name: postgress
