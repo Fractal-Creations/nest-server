@@ -9,12 +9,14 @@ import { UsersController } from './users.controller';
 import { User } from './users.model';
 import { UsersService } from './users.service';
 import { SurveysModule } from 'src/surveys/surveys.module';
+import { Monitoring } from 'src/monitoring/models/monitoring.model';
+import { MonitoringUsers } from 'src/monitoring/models/monitoring-users.model';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    SequelizeModule.forFeature([User,  Role]),
+    SequelizeModule.forFeature([User,  Role, Monitoring, MonitoringUsers]),
     RolesModule,
     forwardRef(() => AuthModule),
   ],

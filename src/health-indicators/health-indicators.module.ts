@@ -7,7 +7,7 @@ import { HealthIndicator } from './models/health-indicator.model';
 import { MeasureResult } from './measures-result/models/measure-result.model';
 import { MeasureInfo } from './measures-info/models/measure-info.model';
 import { HealthIndicatorMeasureTypes } from './models/health-indicator-measure-types.model';
-import { Answer } from './measures-result/models/answers.model';
+
 import { Survey } from 'src/surveys/models/survey.model';
 import { MeasuresResultService } from './measures-result/measures-result.service';
 import { MeasuresResultController } from './measures-result/measures-result.controller';
@@ -19,6 +19,7 @@ import { MeasureMetric } from './measure-metrics/models/measure-metrics.model';
 import { CreateMeasureMetricDto } from './measure-metrics/dto/create-measure-metric.dto';
 import { UpdateMesureMetricDto } from './measure-metrics/dto/update-measure-metric.dto';
 import { MeasureInfoMetrics } from './measures-info/models/measure-info-metrics.model';
+import { AnswerVariant } from './models/answer-variants.model';
 
 @Module({
   controllers: [HealthIndicatorsController, MeasuresInfoController, MeasuresResultController, MeasureMetricsController],
@@ -29,10 +30,10 @@ import { MeasureInfoMetrics } from './measures-info/models/measure-info-metrics.
       MeasureResult,
       MeasureInfo,
       HealthIndicatorMeasureTypes,
-      Answer,
       Survey,
       MeasureMetric,
       MeasureInfoMetrics,
+      AnswerVariant,
     ]),
     SurveysModule,]
 })
