@@ -7,7 +7,9 @@ import { CustomValidationPipe } from "./pipes/validation.pipe";
 
 
 async function start() {
-    const PORT = process.env.PORT || 5001
+    console.log(process.env.NODE_ENV);
+
+    const PORT = process.env.PORT || 5000
     const app = await NestFactory.create(AppModule, {
         logger: ['log', 'error', 'warn', 'debug'],
     });
@@ -20,7 +22,7 @@ async function start() {
     //app.useGlobalPipes(new ValidationPipe);
 
     const config = new DocumentBuilder()
-        .setTitle('REST API Системы Возрастного Тестирования')
+        .setTitle('Health Monitoring Backend')
         .setDescription('REST API Documentation')
         .setVersion('0.0.3')
         .addBearerAuth()
