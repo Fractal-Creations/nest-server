@@ -1,19 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { HealthIndicatorsService } from './health-indicators.service';
 import { CreateHealthIndicatorDto } from './dto/create-health-indicator.dto';
 import { UpdateHealthIndicatorDto } from './dto/update-health-indicator.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HealthIndicator } from './models/health-indicator.model';
+import { RoleType } from 'src/roles/roles.const';
+import { TestType } from './health-indicators.enum';
+import { GenderEnum } from 'src/users/users.const';
+import { ComplexStage } from 'src/surveys/complexes.const';
 
 @ApiTags('Показатели здоровья')
 @Controller('health-indicators')
 export class HealthIndicatorsController {
   constructor(private readonly healthIndicatorsService: HealthIndicatorsService) { }
 
+
   @ApiOperation({ summary: 'Создание нового показателя' })
   @ApiResponse({ status: 200, type: HealthIndicator })
+  @ApiQuery({ name: 'type', enum: TestType })
+  @ApiQuery({ name: 'gender', enum: GenderEnum })
+  @ApiQuery({ name: 'gender', enum: GenderEnum })
+  @ApiQuery({ name: 'stage', enum: ComplexStage})
   @Post()
-  create(@Body() userDto: CreateHealthIndicatorDto) {
+  create(
+    @Query('type') type: TestType = TestType.athletics,
+    @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
+    @Query('stage') stage: ComplexStage = ComplexStage.one,
+    @Body() userDto: CreateHealthIndicatorDto,
+  ) {
+    userDto.characteristicType = type;
+    userDto.gender = gender;
+    userDto.stage = stage;
     return this.healthIndicatorsService.create(userDto);
   }
 

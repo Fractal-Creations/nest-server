@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { HealthIndicatorsService } from './health-indicators.service';
 import { HealthIndicatorsController } from './health-indicators.controller';
-import { SurveysModule } from 'src/surveys/surveys.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { HealthIndicator } from './models/health-indicator.model';
 import { MeasureResult } from './measures-result/models/measure-result.model';
 import { MeasureInfo } from './measures-info/models/measure-info.model';
 import { HealthIndicatorMeasureTypes } from './models/health-indicator-measure-types.model';
 
-import { Survey } from 'src/surveys/models/survey.model';
 import { MeasuresResultService } from './measures-result/measures-result.service';
 import { MeasuresResultController } from './measures-result/measures-result.controller';
 import { MeasuresInfoController } from './measures-info/measures-info.controller';
@@ -20,6 +18,8 @@ import { CreateMeasureMetricDto } from './measure-metrics/dto/create-measure-met
 import { UpdateMesureMetricDto } from './measure-metrics/dto/update-measure-metric.dto';
 import { MeasureInfoMetrics } from './measures-info/models/measure-info-metrics.model';
 import { AnswerVariant } from './models/answer-variants.model';
+import { Complex } from 'src/surveys/models/complex.model';
+import { ComplexesModule } from 'src/surveys/complexes.module';
 
 @Module({
   controllers: [HealthIndicatorsController, MeasuresInfoController, MeasuresResultController, MeasureMetricsController],
@@ -30,11 +30,11 @@ import { AnswerVariant } from './models/answer-variants.model';
       MeasureResult,
       MeasureInfo,
       HealthIndicatorMeasureTypes,
-      Survey,
+      Complex,
       MeasureMetric,
       MeasureInfoMetrics,
       AnswerVariant,
     ]),
-    SurveysModule,]
+    ComplexesModule,]
 })
 export class HealthIndicatorsModule { }

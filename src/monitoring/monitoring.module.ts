@@ -4,10 +4,10 @@ import { MonitoringController } from './monitoring.controller';
 import { Sequelize } from 'sequelize';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from 'src/users/users.model';
-import { Survey } from 'src/surveys/models/survey.model';
 import { Monitoring } from './models/monitoring.model';
 import { Answer } from 'src/answers/models/answers.model';
 import { MonitoringUsers } from './models/monitoring-users.model';
+import { Complex } from 'src/surveys/models/complex.model';
 
 @Module({
   controllers: [MonitoringController],
@@ -16,7 +16,7 @@ import { MonitoringUsers } from './models/monitoring-users.model';
     SequelizeModule.forFeature([
       Monitoring,
       User,
-      Survey,
+      Complex,
       Answer,
       MonitoringUsers,
     ])

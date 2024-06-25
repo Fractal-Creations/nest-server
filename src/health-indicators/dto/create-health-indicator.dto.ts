@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
-import { CharacteristicType } from "../health-indicators.enum";
+import { TestType } from "../health-indicators.enum";
+import { GenderEnum } from "src/users/users.const";
+import { ComplexStage } from "src/surveys/complexes.const";
 
 
 export class CreateHealthIndicatorDto {
@@ -9,14 +11,20 @@ export class CreateHealthIndicatorDto {
     @ApiProperty({ example: 'Пульс', description: 'Название показателя' })
     readonly title: string;
 
-    @ApiProperty({example: CharacteristicType.fr, description: 'Физическое развитие (fr) / Физическая подготовленность (fp)'})
-    readonly characteristicType: CharacteristicType;
+    gender: GenderEnum;
 
-    @ApiProperty({example: ['Пульс стабильный, ритмичный', 'Пульс не стабильный, не ритмичный',  'Пульс отсутствует'], description: 'Варианты ответа для мужчин'})
-    readonly mensAnswerVariants: string[];
+    characteristicType: TestType;
 
-    @ApiProperty({example: ['Пульс стабильный, ритмичный', 'Пульс не стабильный, не ритмичный',  'Пульс отсутствует'], description: 'Варианты ответа для женщин'})
-    readonly womensAnswerVariants: string[];
+    stage: ComplexStage;
+
+    @ApiProperty({example: 10, description: 'Показания для золотой медали)'})
+    goldAnswer: number;
+
+    @ApiProperty({example: 20, description: 'Показания для серебрянной медали'})
+    silverAnswer: number;
+
+    @ApiProperty({example: 30, description: 'Показания для бронзовой медали'})
+    bronzeAnswer: number;
 
     @ApiProperty({ example: 'Оцените характер пульса', description: 'Описание показателя', nullable: true , required: false})
     @IsOptional()

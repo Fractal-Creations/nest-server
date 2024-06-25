@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   main:
-    container_name: mhph-nest-server
+    container_name: svt-nest-server
     build:
       context: .
       dockerfile: ./src/Dockerfile.actions.dev
@@ -11,7 +11,7 @@ services:
     entrypoint: /entrypoint.sh
 
     ports:
-      - 5001:5001
+      - 5003:5003
       - 9228:9228
     command: npm run start:dev
     depends_on:
@@ -24,11 +24,11 @@ services:
     env_file:
       - ./src/.docker.dev.env
     environment:
-      PG_DATA: /var/lib/postgresql/data
+      PG_DATA: /var/lib/postgresql/svt-data
     ports:
-      - 5432:5432
+      - 5434:5434
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/svt-data
     restart: always
 
 volumes:

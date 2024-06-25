@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags }
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { RoleValue } from 'src/roles/roles.const';
+import { RoleType } from 'src/roles/roles.const';
 import { AddRoleDto } from './dto/add-role.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.model';
@@ -28,7 +28,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Получить список всех пользователей' })
     @ApiResponse({ status: 200, type: [User] })
     @UseGuards(JwtAuthGuard)
-    @Roles(RoleValue.ADMIN, RoleValue.DOC_SPEC, RoleValue.SUPER_USER)
+    @Roles(RoleType.ADMIN )
     @UseGuards(RolesGuard)
     @Get()
     getAll() {
@@ -55,7 +55,7 @@ export class UsersController {
     @ApiOperation({ summary: 'Присвоить роль пользователю' })
     @ApiResponse({ status: 200 })
     @UseGuards(JwtAuthGuard)
-    @Roles(RoleValue.ADMIN, RoleValue.DOC_SPEC, RoleValue.SUPER_USER)
+    @Roles(RoleType.ADMIN)
     @UseGuards(RolesGuard)
     @Post('/role')
     addRole(@Body() dto: AddRoleDto) {

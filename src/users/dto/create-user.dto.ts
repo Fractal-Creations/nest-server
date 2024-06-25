@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsDateString, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString, Length } from "class-validator";
 import { AllowNull } from "sequelize-typescript";
 import { ValidationMessage } from "src/exceptions/validation.message";
-import { RoleType, RoleValue } from "src/roles/roles.const";
+import {  RoleType } from "src/roles/roles.const";
 import { Role } from "src/roles/roles.model";
 import { GenderEnum } from "../users.const";
 
@@ -57,7 +57,7 @@ export class CreateUserDto{
     @ApiProperty({example: 'user@mail.ru', description: 'Адрес электронной почты', nullable: true})
     readonly email?: string;
 
-    @IsEnum(RoleValue,{message: ValidationMessage.isEnum})
-    @ApiProperty({example: RoleValue.EXAMINED,  description: 'Роль'})
-    readonly role: RoleValue;  
+    @IsEnum(RoleType,{message: ValidationMessage.isEnum})
+    @ApiProperty({example: RoleType.EXAMINED,  description: 'Роль'})
+    readonly role: RoleType;  
 }

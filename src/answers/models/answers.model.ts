@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Table,  Model, Column, DataType, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
 import { MeasureResult } from "../../health-indicators/measures-result/models/measure-result.model";
-import { AdditionalInfoEnum } from "../../health-indicators/health-indicators.enum";
 import { Monitoring } from "src/monitoring/models/monitoring.model";
 import { User } from "src/users/users.model";
 
@@ -14,10 +13,6 @@ export class Answer extends Model<Answer>{
     @ApiProperty({example: 1, description: 'Оценка: 3/2/1'})
     @Column({type: DataType.INTEGER})
     readonly score: number;
-
-    @ApiProperty({example: AdditionalInfoEnum.minus,  enum: Object.values(AdditionalInfoEnum), description: 'Необязательная дополнительная оценка: +/-'})
-    @Column({type: DataType.ENUM, values: Object.values(AdditionalInfoEnum), allowNull: true })
-    readonly type?: AdditionalInfoEnum;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID мониторинга' })
     @ForeignKey(() => Monitoring)

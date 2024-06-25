@@ -3,17 +3,22 @@ import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequeliz
 import { MeasureInfo } from "../measures-info/models/measure-info.model";
 import { HealthIndicatorMeasureTypes } from "./health-indicator-measure-types.model";
 import { IsOptional } from "class-validator";
-import { CharacteristicType } from "../health-indicators.enum";
-import { Survey } from "src/surveys/models/survey.model";
-import { SurveyHealthIndicators } from "src/surveys/models/survey-health-indicators.model";
+import { TestType } from "../health-indicators.enum";
 import { AnswerVariant } from "./answer-variants.model";
 import { Answer } from "src/answers/models/answers.model";
+import { Complex } from "src/surveys/models/complex.model";
+import { ComplexHealthIndicators } from "src/surveys/models/complex-health-indicators.model";
+import { GenderEnum } from "src/users/users.const";
+import { ComplexStage } from "src/surveys/complexes.const";
 
 interface HealthIndicatorCreationAttrs {
     title: string;
-    characteristicType: CharacteristicType
-    mensAnswerVariants: string[];
-    womensAnswerVariants: string[];
+    characteristicType: TestType
+    gender: GenderEnum;
+    stage: ComplexStage;
+    goldAnswer: number;
+    silverAnswer: number;
+    bronzeAnswer: number;
     description?: string;
     comment?: string;
     measures?: string[];
@@ -29,14 +34,30 @@ export class HealthIndicator extends Model<HealthIndicator, HealthIndicatorCreat
     @Column({type: DataType.STRING, allowNull: false})
     title: string;
 
-    @ApiProperty({example: CharacteristicType.fr, description: 'Физическое развитие (fr) / Физическая подготовленность (fp)'})
-    @Column({type: DataType.ENUM, values: Object.values(CharacteristicType), allowNull: false})
-    characteristicType: CharacteristicType;
+    @ApiProperty({example: ComplexStage.one, description: 'Ступень'})
+    @Column({type: DataType.ENUM, values: Object.values(ComplexStage), allowNull: false})
+     stage: ComplexStage;
 
-    @ApiProperty({type: [AnswerVariant], description: 'Список вариантов ответа для данного показателя', nullable: true})
-    @IsOptional()
-    @HasMany(() => AnswerVariant)
-    answerVariants?: Array<AnswerVariant>;
+    @ApiProperty({example: GenderEnum.MALE, description: 'Пол'})
+    @Column({type: DataType.ENUM, values: Object.values(GenderEnum), allowNull: false})
+    gender: GenderEnum;
+
+    @ApiProperty({example: TestType.gymnastic, description: 'Тип теста'})
+    @Column({type: DataType.ENUM, values: Object.values(TestType), allowNull: false})
+    characteristicType: TestType;
+
+    @ApiProperty({example: 10, description: 'Показания для золотой медали'})
+    @Column({type: DataType.STRING, allowNull: false})
+    goldAnswer: number;
+
+    @ApiProperty({example: 20, description: 'Показания для серебрянной медали'})
+    @Column({type: DataType.STRING, allowNull: false})
+    silverAnswer: number;
+
+    @ApiProperty({example: 30, description: 'Показания для бронзвовой медали'})
+    @Column({type: DataType.STRING, allowNull: false})
+    bronzeAnswer: number;
+    
 
 
     @ApiProperty({example: 'Оцените характер пульса', description: 'Описание показателя', nullable: true})
@@ -54,8 +75,8 @@ export class HealthIndicator extends Model<HealthIndicator, HealthIndicatorCreat
     @BelongsToMany(() => MeasureInfo, () => HealthIndicatorMeasureTypes, 'healthIndicatorId')
     measures?: Array<MeasureInfo & {HealthIndicatorMeasureTypes: HealthIndicatorMeasureTypes}>;
 
-    @ApiProperty({type: [Survey], description: 'Список опросников, в которые входит данный показатель', nullable: true})
+    @ApiProperty({type: [Complex], description: 'Список комплексов, в которые входит данный показатель', nullable: true})
     @IsOptional()
-    @BelongsToMany(() => Survey, () => SurveyHealthIndicators)
-    surveys?: Array<Survey & {SurveyHealthIndicators: SurveyHealthIndicators}>;
+    @BelongsToMany(() => Complex, () => ComplexHealthIndicators)
+    surveys?: Array<Complex & {ComplexHealthIndicators: ComplexHealthIndicators}>;
 }

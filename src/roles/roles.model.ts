@@ -2,13 +2,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
 import { BelongsToMany, Column, DataType, HasOne, Model, Table } from "sequelize-typescript";
 import { User } from "src/users/users.model";
-import { RoleType, RoleValue } from "./roles.const";
+import { RoleType } from "./roles.const";
 import { UserRoles } from "./user-roles.model";
 
 
 interface RoleCreationAttrs {
-    value: RoleValue;
-    type: RoleType;
+    value: RoleType;
     description: string;
 }
 
@@ -19,13 +18,9 @@ export class Role extends Model<Role, RoleCreationAttrs>{
     @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
     id: number;
 
-    @ApiProperty({ example: RoleValue.DOC_SPEC, enum: Object.values(RoleValue), description: 'Уникальное значение роли', })
-    @Column({ type: DataType.ENUM, values:  Object.values(RoleValue), unique: true, allowNull: false })
-    value: RoleValue;
-
-    @ApiProperty({ example: RoleType.RESEARCHER, enum: Object.values(RoleType), description: 'Тип роли', })
-    @Column({ type: DataType.ENUM, values: Object.values(RoleType), allowNull: false })
-    type: RoleType;
+    @ApiProperty({ example: RoleType.EXAMINED, enum: Object.values(RoleType), description: 'Уникальное значение роли', })
+    @Column({ type: DataType.ENUM, values:  Object.values(RoleType), unique: true, allowNull: false })
+    value: RoleType;
 
     @ApiProperty({ example: 'Администратор', description: 'Описание роли', })
     @Column({ type: DataType.STRING, allowNull: false })

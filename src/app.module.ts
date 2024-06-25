@@ -4,13 +4,13 @@ import { SequelizeModule } from "@nestjs/sequelize";
 import { User } from "./users/users.model";
 import { UsersModule } from "./users/users.module";
 import { RolesModule } from './roles/roles.module';
-import { Role } from "./roles/roles.model";
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
 import { HealthIndicatorsModule } from './health-indicators/health-indicators.module';
-import { SurveysModule } from './surveys/surveys.module';
+import { ComplexesModule } from './surveys/complexes.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { AnswersModule } from './answers/answers.module';
+import { Role } from "./roles/roles.model";
 
 
 @Module({
@@ -36,7 +36,7 @@ import { AnswersModule } from './answers/answers.module';
         UsersModule,
         RolesModule,
         AuthModule,
-        SurveysModule,
+        ComplexesModule,
         HealthIndicatorsModule,
         MonitoringModule,
         AnswersModule,

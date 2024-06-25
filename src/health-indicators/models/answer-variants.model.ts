@@ -3,16 +3,14 @@ import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model,
 import { MeasureInfo } from "../measures-info/models/measure-info.model";
 import { HealthIndicatorMeasureTypes } from "./health-indicator-measure-types.model";
 import { IsOptional } from "class-validator";
-import { CharacteristicType } from "../health-indicators.enum";
-import { Survey } from "src/surveys/models/survey.model";
-import { SurveyHealthIndicators } from "src/surveys/models/survey-health-indicators.model";
+import { TestType } from "../health-indicators.enum";
 import { GenderEnum } from "src/users/users.const";
 import { Answer } from "src/answers/models/answers.model";
 import { HealthIndicator } from "./health-indicator.model";
 
 interface AnswerVariantCreationAttrs {
     title: string;
-    characteristicType: CharacteristicType
+    characteristicType: TestType
     answerVariants: string[];
     description?: string;
     comment?: string;

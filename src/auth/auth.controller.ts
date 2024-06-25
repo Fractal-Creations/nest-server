@@ -5,7 +5,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JSON } from 'sequelize';
 import { JSONB } from 'sequelize/types';
 
-import { Role } from 'src/roles/roles.model';
 
 
 import { PinCodeDto } from 'src/auth/dto/pin-code.dto';

@@ -2,9 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript"
 import { Answer } from "src/answers/models/answers.model";
-import { Survey } from "src/surveys/models/survey.model";
 import { User } from "src/users/users.model";
 import { MonitoringUsers } from "./monitoring-users.model";
+import { Complex } from "src/surveys/models/complex.model";
 
 
 interface MonitoringCreationAttrs {
@@ -23,7 +23,7 @@ export class Monitoring extends Model<Monitoring, MonitoringCreationAttrs> {
     readonly id: string;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID закрепленног опросника' })
-    @ForeignKey(() => Survey)
+    @ForeignKey(() => Complex)
     @Column({type: DataType.UUID, allowNull: false})
     readonly surveyId: string 
 
@@ -32,11 +32,11 @@ export class Monitoring extends Model<Monitoring, MonitoringCreationAttrs> {
     @Column({type: DataType.UUID, allowNull: false})
     readonly patientId: string 
 
-    @ApiProperty({ example: Survey, description: 'Закрепленный опросник' })
-    @BelongsTo(() => Survey)
-    readonly survey: Survey 
+    @ApiProperty({ example: Complex, description: 'Закрепленный опросник' })
+    @BelongsTo(() => Complex)
+    readonly survey: Complex 
 
-    @ApiProperty({ example: Survey, description: 'Закрепленный пациент' })
+    @ApiProperty({ example: Complex, description: 'Закрепленный пациент' })
     @BelongsTo(() => User, )
     readonly patient: User;
 /* 

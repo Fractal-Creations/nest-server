@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CreateSurveyDto } from './dto/create-survey.dto';
-import { UpdateSurveyDto } from './dto/update-survey.dto';
+import { CreateSurveyDto } from './dto/create-complex.dto';
+import { UpdateSurveyDto } from './dto/update-complex.dto';
 import { InjectModel } from '@nestjs/sequelize';
-import { Survey } from './models/survey.model';
+import { Complex } from './models/complex.model';
 import { HealthIndicator } from 'src/health-indicators/models/health-indicator.model';
 
 @Injectable()
-export class SurveysService {
-  private readonly logger = new Logger(SurveysService.name);
+export class ComplexesService {
+  private readonly logger = new Logger(ComplexesService.name);
 
   constructor(
-    @InjectModel(Survey) private surveyRepository: typeof Survey,
+    @InjectModel(Complex) private surveyRepository: typeof Complex,
     @InjectModel(HealthIndicator) private healthIndicatorRepository: typeof HealthIndicator,
   ) { }
   async create(createSurveyDto: CreateSurveyDto) {

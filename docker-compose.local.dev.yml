@@ -19,7 +19,7 @@ services:
     depends_on:
       - postgres
     restart: always
-       # https://stackoverflow.com/a/52989931
+    # https://stackoverflow.com/a/52989931
     networks:
         - dockernet
 
@@ -29,19 +29,19 @@ services:
     env_file:
       - ./src/.docker.dev.env
     environment:
-      PG_DATA: /var/lib/postgresql/data
+      PG_DATA: /var/lib/postgresql/svt-data
     ports:
-      - 5432:5432
+      - 5434:5434
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/svt-data
     restart: always
-       # https://stackoverflow.com/a/52989931
+    # https://stackoverflow.com/a/52989931
     networks:
         - dockernet
 
 volumes:
   pgdata:
 
- # https://stackoverflow.com/a/52989931
+  # https://stackoverflow.com/a/52989931
 networks:
-  dockernet:
+    dockernet:

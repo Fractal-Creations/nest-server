@@ -42,11 +42,15 @@ export class User extends Model<User, UserCreationAttrs>{
 
     @ApiProperty({example: 'Москва', description: 'Родной город'})
     @Column({type: DataType.STRING, allowNull: true})
-    readonly city?: string;
+    readonly nativeCity?: string;
 
-    @ApiProperty({example: true, description: 'Коренной житель'})
+    @ApiProperty({example: true, description: 'Коренной житель родного города?'})
     @Column({type: DataType.BOOLEAN, allowNull: true})
     readonly isNative?: boolean;
+
+    @ApiProperty({example: 'Москва', description: 'Город проживания на настоящий момент'})
+    @Column({type: DataType.STRING, allowNull: true})
+    readonly currentCity?: string;
 
 
     @ApiProperty({example: '+79990001122', description: 'Номер телефона'})
@@ -60,8 +64,8 @@ export class User extends Model<User, UserCreationAttrs>{
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
 
-    @BelongsToMany(() => Role, () => UserRoles)
-    monitorings?: Role[];
+ /*    @BelongsToMany(() => Role, () => UserRoles)
+    monitorings?: Role[]; */
 
    /*  @ApiProperty({example: [Monitoring], description: 'Список мониторингов пациента'})
     @HasMany(() => Monitoring)

@@ -45,18 +45,63 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+
+
+## VPS
+
+To deploy to VPS, need to do some things:
+
+First - connect to VPS and create a folder
 
 ```bash
-# unit tests
-$ npm run test
+# Login with shh
+$ ssh '${{ secrets.VPS_SSH_USERNAME }}'@'${{ secrets.VPS_SSH_HOST }}'
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Create folder
+$ mkdir /home/'${{ secrets.VPS_SSH_USERNAME }}'/svt-docker-dev-deploy/
 ```
+Second - download docker-compose.server.dev.yml to VPS
+
+You can do this this with two methods:
+
+1. Copy all by hands
+
+Close SSH session and write this commands to your local terminal:
+```bash
+# 
+$ scp /Users/totalfractal/NodeProjects/svt-server/docker-compose.server.dev.yml root@188.225.47.232:/home/drngk/svt-docker-dev-deploy
+```
+
+Third - copy .env file to VPS
+
+```bash
+# 
+$ scp /Users/totalfractal/NodeProjects/svt-server/src/.docker.dev.env root@188.225.47.232:/home/drngk/svt-docker-dev-deploy/
+```
+
+
+
+
+
+## Postgres
+
+1. В `.env` файлах нужно указать настройки и доступ к Postgres-серверу.
+2. Нужно создать базу данных в Postgres, название которой указано в `.env` файле.
+3. Вероятно, придется поправить некоторые ошибки, которые возникают во время выполнения запросов. Например, могу  вохникнуть "фантомные" ключи, из-за того, что была криво настроена схема бд через ORM код.
+
+## Actions
+
+На странице настроек проекта GitHub, 
+Settings -> Security -> Secrets and variables -> Actions 
+нужно добавить следующие данные:
+- DOCKER_HUB_ACCESS_TOKEN
+- DOCKER_HUB_USERNAME
+- VPS_SSH_HOST
+- VPS_SSH_PASSWORD / VPS_SSH_SECRET
+- VPS_SSH_PORT
+- VPS_SSH_USERNAME
+
+![alt text](image.png)
 
 ## Docker
 
@@ -70,4 +115,3 @@ $ docker-compose -f docker-compose.server.dev.yml up --force-recreate --build --
 # run actions docker image
 $ docker-compose -f docker-compose.actions.dev.yml up --force-recreate --build --no-deps -d
 ```
-
