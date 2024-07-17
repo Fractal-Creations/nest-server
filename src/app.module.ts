@@ -6,11 +6,11 @@ import { UsersModule } from "./users/users.module";
 import { RolesModule } from './roles/roles.module';
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
-import { HealthIndicatorsModule } from './health-indicators/health-indicators.module';
-import { ComplexesModule } from './surveys/complexes.module';
-import { MonitoringModule } from './monitoring/monitoring.module';
+import { IndicatorsModule } from './indicators/indicators.module';
+import { ComplexesModule } from './complexes/complexes.module';
 import { AnswersModule } from './answers/answers.module';
 import { Role } from "./roles/roles.model";
+import { TestingModule } from "@nestjs/testing";
 
 
 @Module({
@@ -37,8 +37,8 @@ import { Role } from "./roles/roles.model";
         RolesModule,
         AuthModule,
         ComplexesModule,
-        HealthIndicatorsModule,
-        MonitoringModule,
+        IndicatorsModule,
+        TestingModule,
         AnswersModule,
       ],
 })

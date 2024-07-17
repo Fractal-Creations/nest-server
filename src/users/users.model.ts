@@ -5,7 +5,6 @@ import { DataTypes, Sequelize, UUIDV4 } from "sequelize/types";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
 import { GenderEnum as GenderEnum } from "./users.const";
-import { Monitoring } from "src/monitoring/models/monitoring.model";
 
 interface UserCreationAttrs{
     surname: string,

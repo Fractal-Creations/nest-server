@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Table,  Model, Column, DataType, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
-import { MeasureResult } from "../../health-indicators/measures-result/models/measure-result.model";
-import { Monitoring } from "src/monitoring/models/monitoring.model";
+import { Result } from "../../indicators/result/models/measure-result.model";
 import { User } from "src/users/users.model";
+import { Testing } from "src/testing/models/testing.model";
 
 @Table({tableName: 'answers'})
 export class Answer extends Model<Answer>{
@@ -15,9 +15,9 @@ export class Answer extends Model<Answer>{
     readonly score: number;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID мониторинга' })
-    @ForeignKey(() => Monitoring)
+    @ForeignKey(() => Testing)
     @Column({type: DataType.UUID, allowNull: false})
-    readonly monitoringId: string;
+    readonly testingId: string;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID пациента' })
     @ForeignKey(() => User)
@@ -37,7 +37,7 @@ export class Answer extends Model<Answer>{
     @Column({type: DataType.STRING, allowNull: true})
     readonly comment?: string;
 
-    @ApiProperty({example: [MeasureResult], description: 'Список прикрепленных измерений'})
-    @HasMany(() => MeasureResult)
-    readonly measures?: MeasureResult[];
+    @ApiProperty({example: [Result], description: 'Список прикрепленных измерений'})
+    @HasMany(() => Result)
+    readonly measures?: Result[];
 }
