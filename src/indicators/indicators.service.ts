@@ -1,11 +1,18 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CreateHealthIndicatorDto } from './dto/create-health-indicator.dto';
-import { UpdateHealthIndicatorDto } from './dto/update-health-indicator.dto';
+import { CreateIndicatorDto } from './dto/create-indicator.dto';
+import { UpdateIndicatorDto } from './dto/update-indicator.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Indicator } from './models/indicator.model';
 import { Complex } from 'src/complexes/models/complex.model';
 import { TestType } from './indicators.enum';
 import { Metric } from './metrics/models/metrics.model';
+import {
+  PaginationQuery,
+  PaginationResponse,
+  PaginationService,
+} from '@ntheanh201/nestjs-sequelize-pagination';
+import { Includeable, Op } from 'sequelize';
+import { IndicatorDto } from './dto/indicator.dto';
 
 @Injectable()
 export class IndicatorsService {
@@ -14,7 +21,8 @@ export class IndicatorsService {
   constructor(
     @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(Indicator) private healthIndicatorRepository: typeof Indicator,
-    @InjectModel(Metric) private measureMetricRepository: typeof Metric,
+    @InjectModel(Metric) private metricRepository: typeof Metric,
+    private paginationService: PaginationService
   ) { }
 
 
@@ -31,7 +39,7 @@ export class IndicatorsService {
 
   }
 
-  update(id: number, updateHealthIndicatorDto: UpdateHealthIndicatorDto) {
+  update(id: number, updateHealthIndicatorDto: UpdateIndicatorDto) {
     return `This action updates a #${ id } healthIndicator`;
   }
 
@@ -48,25 +56,25 @@ export class IndicatorsService {
 
   }
 
-  async create(dto: CreateHealthIndicatorDto) {
+  async create(dto: CreateIndicatorDto) {
     this.logger.debug(`Start creating new health indicator ${ dto.title }`)
 
     const indicator = await this.healthIndicatorRepository.create(dto);
     if (indicator) {
-      if (dto.measures && dto.measures.length != 0){
-        this.logger.debug(`Found ${dto.measures.length} measures`)
-        var infos = Array<Metric>();
-        for (var i =0; i < dto.measures.length; i++){
-            var id =  dto.measures.at(i);
+      if (dto.metricsIdList && dto.metricsIdList.length != 0){
+        this.logger.debug(`Found ${dto.metricsIdList.length} measures`)
+        var metrics = Array<Metric>();
+        for (var i =0; i < dto.metricsIdList.length; i++){
+            var id =  dto.metricsIdList.at(i);
             this.logger.debug(`Lets find measure with id ${id} metrics`)
-            var measureInfo = await this.measureMetricRepository.findOne({where: { id }})
-            if (measureInfo != null){
-              infos.push(measureInfo);
-                this.logger.debug(`Add ${measureInfo.name} metric`)
+            var metric = await this.metricRepository.findOne({where: { id }})
+            if (metric != null){
+              metrics.push(metric);
+                this.logger.debug(`Add ${metric.name} metric`)
             }
         }
 
-        await indicator.$set('measures', infos);
+        await indicator.$set('metrics', metrics);
     } 
         return indicator;
     } else {
@@ -76,15 +84,54 @@ export class IndicatorsService {
 
   }
 
-  async findAll() {
+  async findAll(
+    paginationOptions: PaginationQuery,
+    include: Includeable | Includeable[] = [],
+  ): Promise<PaginationResponse<Indicator>> {
 
+    let whereCondition;
+    const keySearch = paginationOptions?.searchKey;
+    if (keySearch) {
+      whereCondition = {
+        [Op.or]: [
+          { sku: { [Op.like]: `%${keySearch}%` } },
+          { barcode: { [Op.like]: `%${keySearch}%` } },
+          { name: { [Op.like]: `%${keySearch}%` } },
+        ],
+      };
+    }
+/*     var result = await this.paginationService.findAll<Indicator>(
+      {
+        ...paginationOptions,
+        model: Indicator,
+      },
+      {
+        where: whereCondition,
+        include,
+      },
+    );
+    var dtos = result.data.map(x =>  IndicatorDto.fromModel(x));
+    var response =  */ 
+    return (await this.paginationService.findAll<Indicator>(
+      {
+        ...paginationOptions,
+        model: Indicator,
 
-    const indicators = await this.healthIndicatorRepository.findAll({ include: { all: true } });
+      },
+      {
+        
+        where: whereCondition,
+        include,
+
+      },
+    ));
+
+  /*   const indicators = await this.healthIndicatorRepository.findAll({ include: { all: true } });
     if (indicators) {
       return indicators;
     } else {
       throw new HttpException(`Таблица не найдена или повреждена `, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    } */
 
   }
 }

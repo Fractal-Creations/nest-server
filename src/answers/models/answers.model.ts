@@ -37,7 +37,7 @@ export class Answer extends Model<Answer>{
     @Column({type: DataType.STRING, allowNull: true})
     readonly comment?: string;
 
-    @ApiProperty({example: [Result], description: 'Список прикрепленных измерений'})
+    @ApiProperty({example: [Result], description: 'Список прикрепленных метрик'})
     @HasMany(() => Result)
     readonly measures?: Result[];
 }

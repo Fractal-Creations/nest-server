@@ -3,13 +3,22 @@ import { Metric } from './models/metrics.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { UpdateMesureMetricDto } from './dto/update-measure-metric.dto';
 import { CreateMeasureMetricDto } from './dto/create-measure-metric.dto';
+import { MetricDto } from './dto/metric.dto';
+import { Includeable, Op } from 'sequelize';
+import {
+    PaginationQuery,
+    PaginationResponse,
+    PaginationService,
+  } from '@ntheanh201/nestjs-sequelize-pagination';
 
 @Injectable()
-export class MeasureMetricsService {
-    private readonly logger = new Logger(MeasureMetricsService.name);
+export class MetricsService {
+    private readonly logger = new Logger(MetricsService.name);
 
     constructor(
-        @InjectModel(Metric) private measureMetricRepository: typeof Metric
+        @InjectModel(Metric) private measureMetricRepository: typeof Metric,
+        private paginationService: PaginationService
+
     ) { }
 
 
@@ -57,15 +66,45 @@ export class MeasureMetricsService {
 
     }
 
-    async findAll() {
-
-
-        const metrics = await this.measureMetricRepository.findAll({include: {all: true} });
-        if (metrics) {
-            return metrics;
-        } else {
-            throw new HttpException(`Таблица не найдена или повреждена `, HttpStatus.INTERNAL_SERVER_ERROR);
+    async findAll(
+        paginationOptions: PaginationQuery,
+        include: Includeable | Includeable[] = [],
+      ): Promise<PaginationResponse<Metric>> {
+        let whereCondition;
+        const keySearch = paginationOptions?.searchKey;
+        if (keySearch) {
+          whereCondition = {
+            [Op.or]: [
+              { name: { [Op.like]: `%${keySearch}%` } },
+              { unit: { [Op.like]: `%${keySearch}%` } },
+              { comment: { [Op.like]: `%${keySearch}%` } },
+            ],
+          };
         }
+        var result = await this.paginationService.findAll<Metric>(
+          {
+            ...paginationOptions,
+            model: Metric,
+          },
+          {
+            where: whereCondition,
+            include,
+          },
+        );
+        
+        return this.paginationService.findAll(
+          {
+            ...paginationOptions,
+            model: Metric,
 
-    }
+          },
+          {
+            where: whereCondition,
+            include,
+
+          attributes: ['id', 'name', 'unit', 'comment'],
+          
+          },
+        );
+      }
 }

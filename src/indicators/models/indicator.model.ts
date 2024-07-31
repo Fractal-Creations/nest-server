@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { IndicatorMetrics } from "./indicator-metrics.model";
 import { IsOptional } from "class-validator";
 import { TestType } from "../indicators.enum";
@@ -8,6 +8,7 @@ import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
 import { Metric } from "../metrics/models/metrics.model";
 import { ComplexIndicators } from "src/complexes/models/complex-indicators.model";
+import { MetricDto } from "../metrics/dto/metric.dto";
 
 interface HealthIndicatorCreationAttrs {
     title: string;
@@ -20,6 +21,7 @@ interface HealthIndicatorCreationAttrs {
     description?: string;
     comment?: string;
     measures?: string[];
+    boundaryValues?: number[];
 }
 
 @Table({tableName: 'indicators'})
@@ -56,7 +58,10 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
     @Column({type: DataType.STRING, allowNull: false})
     bronzeAnswer: number;
     
-
+    @ApiProperty({type: Array<Number>, example: [10.0, 20.0, 30.0], description: 'Список граничных значений (напр. бег на 10, 20, 30 км)', nullable: true, required: false })
+    @Column({type: DataType.ARRAY(DataType.FLOAT), allowNull: true})
+    @IsOptional()
+    readonly boundaryValues?: number[];
 
     @ApiProperty({example: 'Оцените характер пульса', description: 'Описание показателя', nullable: true})
     @IsOptional()
@@ -68,10 +73,20 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
     @Column({type: DataType.STRING, allowNull: true})
     comment?: string;
 
-    @ApiProperty({type: [Metric],description: 'Список измерений, необходимых для данного показателя', nullable: true})
+    @ApiProperty({type: [Metric],description: 'Список метрик, необходимых для данного показателя', nullable: true})
     @IsOptional()
     @BelongsToMany(() => Metric, () => IndicatorMetrics)
-    measures?: Array<Metric & {HealthIndicatorMeasureTypes: IndicatorMetrics}>;
+    metrics?: Array<Metric & {HealthIndicatorMeasureTypes: IndicatorMetrics}>;
+
+    @ApiProperty({  description: 'Метрика для границ данного показателя. Например: "Челочный бег на расстнояние 10, 20, 30 м', nullable: true})
+    @IsOptional()
+    @BelongsTo(() => Metric)
+    variantMetric?: Metric;
+
+    @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID метрики граница данного показателя' })
+    @ForeignKey(() => Metric)
+    @Column({type: DataType.UUID, allowNull: false})
+    readonly boundaryMetricId: string 
 
     @ApiHideProperty()  
     @BelongsToMany(() => Complex, () => ComplexIndicators)

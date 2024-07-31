@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ResultService } from './result.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Результаты измерений')
+@ApiTags('Результаты')
 @Controller('result')
 export class ResultController {
     constructor(private readonly measuresService: ResultService) { }

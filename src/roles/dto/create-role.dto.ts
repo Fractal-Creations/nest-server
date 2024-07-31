@@ -5,10 +5,7 @@ import { RoleType } from "../roles.const";
 
 export class CreateRoleDto {
 
-    @IsNotEmpty({message: ValidationMessage.isEmpty})
-    @IsString({message: ValidationMessage.isString})
-    @ApiProperty({example: RoleType.EXAMINED, description: 'Тип роли'})
-    readonly type: RoleType;
+     value: RoleType;
 
     @IsNotEmpty({message: ValidationMessage.isEmpty})
     @IsString({message: ValidationMessage.isString})

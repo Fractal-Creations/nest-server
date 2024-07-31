@@ -24,10 +24,7 @@ export class CreateUserDto{
     @ApiProperty({example: 'Иванович', description: 'Отчество', nullable: true})
     readonly patronymic?: string;
 
-    @IsString({message: ValidationMessage.isString})
-    @IsNotEmpty({message: ValidationMessage.isEmpty})
-    @ApiProperty({example: 'male', description: 'Пол'})
-    readonly gender: string;
+     gender: GenderEnum;
 
     @IsDateString()
     @IsNotEmpty({message: ValidationMessage.isEmpty})
@@ -37,13 +34,18 @@ export class CreateUserDto{
 
     @IsOptional()
     @IsString()
-    @ApiProperty({example: 'Москва', description: 'Родной город', nullable: true})
-    readonly city?: string;
+    @ApiProperty({example: 'Москва', description: 'Родной город'})
+    readonly nativeCity?: string;
 
     @IsOptional()
     @IsBoolean()
     @ApiProperty({example: true, description: 'Коренной житель', nullable: true})
     readonly isNative?: boolean;
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({example: 'Москва', description: 'Город проживания на настоящий момент'})
+    readonly currentCity?: string;
 
     @IsPhoneNumber('RU')
     @IsNotEmpty({message: ValidationMessage.isEmpty})
@@ -57,7 +59,5 @@ export class CreateUserDto{
     @ApiProperty({example: 'user@mail.ru', description: 'Адрес электронной почты', nullable: true})
     readonly email?: string;
 
-    @IsEnum(RoleType,{message: ValidationMessage.isEnum})
-    @ApiProperty({example: RoleType.EXAMINED,  description: 'Роль'})
-    readonly role: RoleType;  
+     role: RoleType;  
 }

@@ -11,31 +11,32 @@ export class RolesService {
     constructor(@InjectModel(Role) private roleRepository: typeof Role){
 
     }
-    /* 
+    
     async createRole(dto: CreateRoleDto){
-        const role = await this.getRoleByValue(dto.value);
+       /*  const role = await this.getRoleByValue(dto.type);
         if (role) {
             throw new HttpException('Роль уже существует', HttpStatus.BAD_REQUEST);
 
-        }
-
-        return await this.roleRepository.create(dto);
-    } */
+        } */
+       return  await this.roleRepository.create(dto);
+       
+    }
 
     async getAllRoles() {
         const roles = await this.roleRepository.findAll({include: {all: true}});
         return roles;
     }
 
-    async getRoleByValue(value:  RoleType){
+    async getRoleByValue(value:  RoleType) {
         const role = await this.roleRepository.findOne({where: {value}})
-        return role;
+        return role
     }
 
-    async getRoleById(id: number){
+    async getRoleById(id: number) : Promise<Role>{
         const role = await this.roleRepository.findOne({where: {id}})
-        if (role) return role;
+        if (role)   role
         throw new HttpException('Роль не существует', HttpStatus.BAD_REQUEST);
         
     }
+
 }

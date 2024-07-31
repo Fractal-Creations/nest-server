@@ -9,7 +9,7 @@ import { IndicatorMetrics } from './models/indicator-metrics.model';
 import { ResultService } from './result/result.service';
 import { ResultController } from './result/result.controller';
 import { MeasureMetricsController } from './metrics/metrics.controller';
-import { MeasureMetricsService } from './metrics/metrics.service';
+import { MetricsService } from './metrics/metrics.service';
 import { Metric } from './metrics/models/metrics.model';
 import { CreateMeasureMetricDto } from './metrics/dto/create-measure-metric.dto';
 import { UpdateMesureMetricDto } from './metrics/dto/update-measure-metric.dto';
@@ -18,7 +18,7 @@ import { ComplexesModule } from 'src/complexes/complexes.module';
 
 @Module({
   controllers: [IndicatorsController, ResultController, MeasureMetricsController],
-  providers: [IndicatorsService, ResultService, MeasureMetricsService],
+  providers: [IndicatorsService, ResultService, MetricsService],
   imports: [
     SequelizeModule.forFeature([
       Indicator,

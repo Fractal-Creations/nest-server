@@ -4,69 +4,96 @@ import { BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "
 import { DataTypes, Sequelize, UUIDV4 } from "sequelize/types";
 import { Role } from "src/roles/roles.model";
 import { UserRoles } from "src/roles/user-roles.model";
-import { GenderEnum as GenderEnum } from "./users.const";
+import { BaseClass } from "src/common/base-class";
+import { User } from "../users.model";
+import { GenderEnum } from "../users.const";
+import { RoleDto } from "src/roles/dto/role.dto";
 
-interface UserCreationAttrs{
-    surname: string,
-    name: string,
-    phone: string,
-}
 
-@Table({tableName: 'users'})
-export class User extends Model<User, UserCreationAttrs>{
+
+export class UserDto extends BaseClass {
 
     @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID'})
-    @Column({type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true})
-    readonly id: string;
+
+    readonly id: String;
 
     @ApiProperty({example: 'Иванов', description: 'Фамилия'})
-    @Column({type: DataType.STRING})
+
     readonly surname: string;
 
     @ApiProperty({example: 'Иван', description: 'Имя'})
-    @Column({type: DataType.STRING})
+
     readonly name: string;
 
     @ApiProperty({example: 'Иванович', description: 'Отчество'})
-    @Column({type: DataType.STRING, allowNull: true})
+
     readonly patronymic?: string;
 
     @ApiProperty({example: GenderEnum.MALE, description: 'Пол'})
-    @Column({type: DataType.STRING})
+
     readonly gender: string;
 
     @ApiProperty({example: new Date('1994-12-16'), description: 'Дата рождения'})
-    @Column({type: DataType.DATEONLY})
+
     readonly birthDate: Date;
 
     @ApiProperty({example: 'Москва', description: 'Родной город'})
-    @Column({type: DataType.STRING, allowNull: true})
+
     readonly nativeCity?: string;
 
     @ApiProperty({example: true, description: 'Коренной житель родного города?'})
-    @Column({type: DataType.BOOLEAN, allowNull: true})
+
     readonly isNative?: boolean;
 
     @ApiProperty({example: 'Москва', description: 'Город проживания на настоящий момент'})
-    @Column({type: DataType.STRING, allowNull: true})
+
     readonly currentCity?: string;
 
 
     @ApiProperty({example: '+79990001122', description: 'Номер телефона'})
-    @Column({type: DataType.STRING, unique: false})
+
     phone: string;
 
     @ApiProperty({example: 'user@mail.ru', description: 'Электронная почта'})
-    @Column({type: DataType.STRING, unique: false, allowNull: true})
+
     email: string;
 
-    @BelongsToMany(() => Role, () => UserRoles)
-    roles: Role[];
+    @ApiProperty({example: [RoleDto], description: 'Роли пользователя'})
 
- /*    @BelongsToMany(() => Role, () => UserRoles)
-    monitorings?: Role[]; */
+    roles: RoleDto[];
 
-   /*  @ApiProperty({example: [Monitoring], description: 'Список мониторингов пациента'})
-    @HasMany(() => Monitoring)
-     monitorings?: Monitoring[]; */
+    static fromModel(model: User) : UserDto {
+        const dto = UserDto.create({
+            id: model.id,
+            surname: model.surname,
+            name: model.name,
+            patronymic: model.patronymic,
+            gender: model.gender,
+            birthDate: model.birthDate,
+            nativeCity: model.nativeCity,
+            isNative: model.isNative,
+            currentCity: model.currentCity,
+            phone: model.phone,
+            email: model.email
+        });
+        return dto;
+    }
+
+    static fromModelAndRoles(model: User, roles: Role[]) : UserDto {
+        const dto = UserDto.create({
+            id: model.id,
+            surname: model.surname,
+            name: model.name,
+            patronymic: model.patronymic,
+            gender: model.gender,
+            birthDate: model.birthDate,
+            nativeCity: model.nativeCity,
+            isNative: model.isNative,
+            currentCity: model.currentCity,
+            phone: model.phone,
+            email: model.email,
+            roles: roles.map(role => RoleDto.fromModel(role)),
+        });
+        return dto;
+    }
 }

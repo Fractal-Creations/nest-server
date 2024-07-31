@@ -5,7 +5,11 @@ import { UpdateSurveyDto } from './dto/update-complex.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Complex } from './models/complex.model';
 import { AddIndicatorDto } from './dto/add-indicator.dto';
-
+import {
+  PaginationQuery,
+  PaginationResponse,
+  Pagination
+} from '@ntheanh201/nestjs-sequelize-pagination';
 
 @ApiTags('Комплексы')
 @Controller('complexes')
@@ -22,8 +26,16 @@ export class SurveysController {
   @ApiOperation({summary: 'Получить все комплексы'})
   @ApiResponse({status: 200, type: [Complex]})
   @Get()
-  findAll() {
-    return this.surveysService.findAll();
+  findAll(
+    @Pagination({
+      limit: 10,
+      page: 0,
+      orderBy: 'createdAt',
+      orderDirection: 'DESC',
+    })
+    pagination: PaginationQuery,
+  ): Promise<PaginationResponse<Complex>> {
+    return this.surveysService.findAll(pagination);
   }
 
   @ApiOperation({summary: 'Получить комплекс по id'})

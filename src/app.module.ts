@@ -11,6 +11,7 @@ import { ComplexesModule } from './complexes/complexes.module';
 import { AnswersModule } from './answers/answers.module';
 import { Role } from "./roles/roles.model";
 import { TestingModule } from "@nestjs/testing";
+import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
 
 
 @Module({
@@ -21,6 +22,9 @@ import { TestingModule } from "@nestjs/testing";
       }),
         SequelizeModule.forRoot({
           dialect: 'postgres',
+          define: {
+           // timestamps: false
+          },
           host: process.env.POSTGRES_HOST,
           port: Number(process.env.POSTGRES_PORT),
           username: process.env.POSTGRES_USER,
@@ -32,6 +36,7 @@ import { TestingModule } from "@nestjs/testing";
             UserRoles
           ],
           autoLoadModels: true,
+          
         }),
         UsersModule,
         RolesModule,
@@ -40,6 +45,7 @@ import { TestingModule } from "@nestjs/testing";
         IndicatorsModule,
         TestingModule,
         AnswersModule,
+        PaginationModule.forRoot({ isGlobal: true }),
       ],
 })
 export class AppModule {}

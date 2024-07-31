@@ -4,27 +4,38 @@ import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from 'src/roles/roles.service';
 import { AddRoleDto } from './dto/add-role.dto';
 import { CreateUserDto as CreateUserDto } from './dto/create-user.dto';
+import { BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 
 import { User } from './users.model';
+
+import {
+    PaginationQuery,
+    PaginationResponse,
+    PaginationService,
+  } from '@ntheanh201/nestjs-sequelize-pagination';
+import {  DataTypes, Includeable, Op, Sequelize } from 'sequelize';
+import { RoleDto } from 'src/roles/dto/role.dto';
+import { UUIDV4 } from 'sequelize';
+import { UserDto } from './dto/user.dto';
+import { Role } from 'src/roles/roles.model';
+//import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class UsersService {
 
+
     private readonly logger = new Logger(UsersService.name);
 
     constructor (@InjectModel(User) private userRepository: typeof User,
-    private roleService: RolesService,  private jwtService: JwtService,){
+    private roleService: RolesService,  private jwtService: JwtService,
+    private paginationService: PaginationService
+){
 
     }
 
     async createUser(dto: CreateUserDto){
         this.logger.debug(`Start register ${dto.phone}`)
-        const candidate = await this.getUsersByPhone(dto.phone);
-        if(candidate){
-            this.logger.debug(`User with this phone ${dto.phone} already exists!`)
-            throw new HttpException('Исследователь с таким номером телефона уже существует', HttpStatus.BAD_REQUEST);
-        };
-        this.logger.debug(`Email ${dto.phone} is free`)
         const role = await this.roleService.getRoleByValue(dto.role);
         if(!role){
             throw new HttpException(`Роль не существует`, HttpStatus.BAD_REQUEST);
@@ -38,16 +49,47 @@ export class UsersService {
         }
         
     }
+    async findAll(
+        paginationOptions: PaginationQuery,
+        include: Includeable | Includeable[] = [],
+      ): Promise<PaginationResponse<User>> {
+        let whereCondition;
+        const keySearch = paginationOptions?.searchKey;
+        if (keySearch) {
+          whereCondition = {
+            [Op.or]: [
+              { surname: { [Op.like]: `%${keySearch}%` } },
+              { name: { [Op.like]: `%${keySearch}%` } },
+              { patronymic: { [Op.like]: `%${keySearch}%` } },
+              { phone: { [Op.like]: `%${keySearch}%` } },
+            ],
+          };
+        }
+        
+        return this.paginationService.findAll(
+          {
+            ...paginationOptions,
+            model: User,
+            
 
-    async  getAllUsers(){
-        const users = await this.userRepository.findAll({include: {all: true}});
-        return users;
-    }
+          },
+          {
+            where: whereCondition,
+            include,
+          
+          attributes: ['id', 'surname', 'name', 'patronymic', 'phone', 'email', 'gender', 'birthDate', 'nativeCity', 'isNative', 'currentCity'],
+          
+          },
+        );
+      }
 
-    async  getUserById(idUser: string){
-        const user = await this.userRepository.findByPk(idUser, {include: {all: true}});
-        if (user){
-            return user;
+    async  getUserById(idUser: string) : Promise<UserDto>{
+    
+        const user = await this.userRepository.findByPk(idUser, {include: {all: true, nested: true}});
+        this.logger.debug(user);
+        //const roles = await user.$get('roles', {include: {all: true, nested: true}});
+        if (user ){
+            return UserDto.fromModelAndRoles(user, user.roles);
         }
         throw new HttpException(`Пользователь не существует`, HttpStatus.BAD_REQUEST);
     }

@@ -2,8 +2,14 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateSurveyDto } from './dto/create-complex.dto';
 import { UpdateSurveyDto } from './dto/update-complex.dto';
 import { InjectModel } from '@nestjs/sequelize';
+import { Includeable, Op } from 'sequelize';
 import { Complex } from './models/complex.model';
 import { Indicator } from 'src/indicators/models/indicator.model';
+import {
+  PaginationQuery,
+  PaginationResponse,
+  PaginationService,
+} from '@ntheanh201/nestjs-sequelize-pagination';
 
 @Injectable()
 export class ComplexesService {
@@ -12,6 +18,7 @@ export class ComplexesService {
   constructor(
     @InjectModel(Complex) private surveyRepository: typeof Complex,
     @InjectModel(Indicator) private healthIndicatorRepository: typeof Indicator,
+    private paginationService: PaginationService
   ) { }
   async create(createSurveyDto: CreateSurveyDto) {
     this.logger.debug(`Start creating new survey indicator ${ createSurveyDto.title }`)
@@ -39,14 +46,43 @@ export class ComplexesService {
     }
   }
 
-  async findAll() {
+  /* async findAll() {
     const surveys = await this.surveyRepository.findAll({include: {all: true, nested: true}});
     if (surveys) {
       return surveys;
     } else {
       throw new HttpException(`Таблица не найдена или повреждена `, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  } */
+
+  async findAll(
+    paginationOptions: PaginationQuery,
+    include: Includeable | Includeable[] = [],
+  ): Promise<PaginationResponse<Complex>> {
+    let whereCondition;
+    const keySearch = paginationOptions?.searchKey;
+    if (keySearch) {
+      whereCondition = {
+        [Op.or]: [
+          { sku: { [Op.like]: `%${keySearch}%` } },
+          { barcode: { [Op.like]: `%${keySearch}%` } },
+          { name: { [Op.like]: `%${keySearch}%` } },
+        ],
+      };
+    }
+
+    return this.paginationService.findAll(
+      {
+        ...paginationOptions,
+        model: Complex,
+      },
+      {
+        where: whereCondition,
+        include,
+      },
+    );
   }
+
 
   findOne(id: number) {
     return `This action returns a #${id} survey`;

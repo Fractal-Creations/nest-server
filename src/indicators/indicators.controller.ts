@@ -1,22 +1,28 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { IndicatorsService as IndicatorsService } from './indicators.service';
-import { CreateHealthIndicatorDto } from './dto/create-health-indicator.dto';
-import { UpdateHealthIndicatorDto } from './dto/update-health-indicator.dto';
+import { CreateIndicatorDto } from './dto/create-indicator.dto';
+import { UpdateIndicatorDto } from './dto/update-indicator.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Indicator } from './models/indicator.model';
 import { RoleType } from 'src/roles/roles.const';
 import { TestType } from './indicators.enum';
 import { GenderEnum } from 'src/users/users.const';
 import { ComplexStage } from 'src/complexes/complexes.const';
+import { IndicatorDto } from './dto/indicator.dto';
+import {
+  PaginationQuery,
+  PaginationResponse,
+  Pagination
+} from '@ntheanh201/nestjs-sequelize-pagination';
 
-@ApiTags('Показатели здоровья')
+
+@ApiTags('Индикаторы')
 @Controller('indicators')
 export class IndicatorsController {
   constructor(private readonly healthIndicatorsService: IndicatorsService) { }
 
 
-  @ApiOperation({ summary: 'Создание нового показателя' })
-  @ApiResponse({ status: 200, type: Indicator })
+  @ApiOperation({ summary: 'Создание нового индикатора' })
+  @ApiResponse({ status: 200, type: IndicatorDto })
   @ApiQuery({ name: 'type', enum: TestType })
   @ApiQuery({ name: 'gender', enum: GenderEnum })
   @ApiQuery({ name: 'gender', enum: GenderEnum })
@@ -26,7 +32,7 @@ export class IndicatorsController {
     @Query('type') type: TestType = TestType.athletics,
     @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
     @Query('stage') stage: ComplexStage = ComplexStage.one,
-    @Body() userDto: CreateHealthIndicatorDto,
+    @Body() userDto: CreateIndicatorDto,
   ) {
     userDto.characteristicType = type;
     userDto.gender = gender;
@@ -34,24 +40,36 @@ export class IndicatorsController {
     return this.healthIndicatorsService.create(userDto);
   }
 
-  @ApiOperation({ summary: 'Получить все показатели' })
-  @ApiResponse({ status: 200, type: [Indicator] })
+  @ApiOperation({ summary: 'Получить все индикаторы' })
+  @ApiResponse({ status: 200, type: [IndicatorDto] })
   @Get()
-  findAll() {
-    return this.healthIndicatorsService.findAll();
+  findAll(
+    @Pagination({
+      limit: 10,
+      page: 0,
+      orderBy: 'createdAt',
+      orderDirection: 'DESC',
+    })
+    pagination: PaginationQuery,
+  ): Promise<PaginationResponse<IndicatorDto>> {
+    return this.healthIndicatorsService.findAll(pagination);
   }
 
-
+  @ApiOperation({ summary: 'Получить индикатор по {id}' })
+  @ApiResponse({ status: 200, type: IndicatorDto })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.healthIndicatorsService.findOne(id);
   }
 
+  @ApiOperation({ summary: 'Обновить индикатор по {id}' })
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateHealthIndicatorDto) {
+  update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateIndicatorDto) {
     return this.healthIndicatorsService.update(+id, updateHealthIndicatorDto);
   }
 
+  @ApiOperation({ summary: 'Удалить индикатор по {id}' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.healthIndicatorsService.remove(id);

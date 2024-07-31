@@ -1,28 +1,44 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { MeasureMetricsService } from './metrics.service';
+import { MetricsService } from './metrics.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateMeasureMetricDto } from './dto/create-measure-metric.dto';
 import { Metric } from './models/metrics.model';
-import { UpdateHealthIndicatorDto } from '../dto/update-health-indicator.dto';
+import { UpdateIndicatorDto } from '../dto/update-indicator.dto';
+import { MetricDto } from './dto/metric.dto';
+import {
+  PaginationQuery,
+  PaginationResponse,
+  Pagination
+} from '@ntheanh201/nestjs-sequelize-pagination';
 
-@ApiTags('Метрики измерений')
+@ApiTags('Метрики')
 @Controller('metrics')
 export class MeasureMetricsController {
 
-    constructor(private readonly measuresService: MeasureMetricsService) { }
+    constructor(private readonly measuresService: MetricsService) { }
 
-    @ApiOperation({ summary: 'Создание новой метрики измерения' })
+    @ApiOperation({ summary: 'Создание новой метрики' })
     @ApiResponse({ status: 201, type: Metric })
     @Post()
     create(@Body() dto: CreateMeasureMetricDto) {
       return this.measuresService.create(dto);
     }
   
-    @ApiOperation({ summary: 'Получить все метрики измерений' })
-    @ApiResponse({ status: 200, type: [Metric] })
+    @ApiOperation({ summary: 'Получить все метрики' })
+    @ApiResponse({ status: 200, type: [MetricDto] })
     @Get()
-    findAll() {
-      return this.measuresService.findAll();
+    async findAll(
+      @Pagination({
+        limit: 10,
+        page: 0,
+        orderBy: 'createdAt',
+        orderDirection: 'DESC',
+      })
+      pagination: PaginationQuery,
+    ): Promise<PaginationResponse<MetricDto>> {
+      var res =  await this.measuresService.findAll(pagination);
+      console.log(typeof res)
+      return res;
     }
   
     @ApiOperation({ summary: 'Получить метрику измерения по id' })
@@ -33,7 +49,7 @@ export class MeasureMetricsController {
     
     @ApiOperation({ summary: 'Обновить метрику измерения по id' })
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateHealthIndicatorDto) {
+    update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateIndicatorDto) {
       return this.measuresService.update(id, updateHealthIndicatorDto);
     }
     
