@@ -6,9 +6,9 @@ import { TestType } from "../indicators.enum";
 import { Complex } from "src/complexes/models/complex.model";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
-import { Metric } from "../metrics/models/metrics.model";
+import { Metric } from "../../metrics/models/metrics.model";
 import { ComplexIndicators } from "src/complexes/models/complex-indicators.model";
-import { MetricDto } from "../metrics/dto/metric.dto";
+import { MetricDto } from "../../metrics/dto/metric.dto";
 
 interface HealthIndicatorCreationAttrs {
     title: string;

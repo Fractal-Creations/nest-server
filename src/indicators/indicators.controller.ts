@@ -13,6 +13,7 @@ import {
   PaginationResponse,
   Pagination
 } from '@ntheanh201/nestjs-sequelize-pagination';
+import { PaginationIndicatorDto } from './dto/pagination-indicator.dto';
 
 
 @ApiTags('Индикаторы')
@@ -40,8 +41,8 @@ export class IndicatorsController {
     return this.healthIndicatorsService.create(userDto);
   }
 
-  @ApiOperation({ summary: 'Получить все индикаторы' })
-  @ApiResponse({ status: 200, type: [IndicatorDto] })
+  @ApiOperation({ summary: 'Поиск индикаторов' })
+  @ApiResponse({ status: 200, type: PaginationIndicatorDto })
   @Get()
   findAll(
     @Pagination({

@@ -3,7 +3,7 @@ import { MetricsService } from './metrics.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateMeasureMetricDto } from './dto/create-measure-metric.dto';
 import { Metric } from './models/metrics.model';
-import { UpdateIndicatorDto } from '../dto/update-indicator.dto';
+import { UpdateIndicatorDto } from '../indicators/dto/update-indicator.dto';
 import { MetricDto } from './dto/metric.dto';
 import {
   PaginationQuery,

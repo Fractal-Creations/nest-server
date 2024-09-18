@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Model, Column, DataType, Table, BelongsTo, ForeignKey, HasOne } from "sequelize-typescript";
 import { Answer } from "../../../answers/models/answers.model";
-import { Metric } from "src/indicators/metrics/models/metrics.model";
+import { Metric } from "src/metrics/models/metrics.model";
 
 
 @Table({ tableName: 'measure-results' })

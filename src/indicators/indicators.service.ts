@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Indicator } from './models/indicator.model';
 import { Complex } from 'src/complexes/models/complex.model';
 import { TestType } from './indicators.enum';
-import { Metric } from './metrics/models/metrics.model';
+import { Metric } from '../metrics/models/metrics.model';
 import {
   PaginationQuery,
   PaginationResponse,
@@ -13,6 +13,7 @@ import {
 } from '@ntheanh201/nestjs-sequelize-pagination';
 import { Includeable, Op } from 'sequelize';
 import { IndicatorDto } from './dto/indicator.dto';
+import { PaginationIndicatorDto } from './dto/pagination-indicator.dto';
 
 @Injectable()
 export class IndicatorsService {
@@ -87,7 +88,7 @@ export class IndicatorsService {
   async findAll(
     paginationOptions: PaginationQuery,
     include: Includeable | Includeable[] = [],
-  ): Promise<PaginationResponse<Indicator>> {
+  ): Promise<PaginationIndicatorDto> {
 
     let whereCondition;
     const keySearch = paginationOptions?.searchKey;
@@ -100,19 +101,7 @@ export class IndicatorsService {
         ],
       };
     }
-/*     var result = await this.paginationService.findAll<Indicator>(
-      {
-        ...paginationOptions,
-        model: Indicator,
-      },
-      {
-        where: whereCondition,
-        include,
-      },
-    );
-    var dtos = result.data.map(x =>  IndicatorDto.fromModel(x));
-    var response =  */ 
-    return (await this.paginationService.findAll<Indicator>(
+    var response =   (await this.paginationService.findAll<Indicator>(
       {
         ...paginationOptions,
         model: Indicator,
@@ -121,10 +110,11 @@ export class IndicatorsService {
       {
         
         where: whereCondition,
-        include,
+        include : { all: true, nested: true },
 
       },
     ));
+    return new PaginationIndicatorDto(response);
 
   /*   const indicators = await this.healthIndicatorRepository.findAll({ include: { all: true } });
     if (indicators) {

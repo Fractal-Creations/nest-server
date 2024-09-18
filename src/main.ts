@@ -18,12 +18,13 @@ async function start() {
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             credentials: true,
         });
+        app.setGlobalPrefix('api');
         app.useGlobalInterceptors(new TransformInterceptor());
     //app.useGlobalPipes(new ValidationPipe);
 
     const config = new DocumentBuilder()
         .setTitle('REST API Системы Возрастного Тестирования')
-        .setVersion('0.0.6')
+        .setVersion('0.1.2')
         .addBearerAuth()
         .build()
 

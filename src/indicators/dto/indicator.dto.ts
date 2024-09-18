@@ -4,13 +4,15 @@ import { TestType } from "../indicators.enum";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
 import { BelongsToMany } from "sequelize";
-import { Metric } from "../metrics/models/metrics.model";
+import { Metric } from "../../metrics/models/metrics.model";
 import { IndicatorMetrics } from "../models/indicator-metrics.model";
 import { BaseClass } from "src/common/base-class";
 import { Indicator } from "../models/indicator.model";
+import { plainToInstance } from "class-transformer";
+import { MetricDto } from "src/metrics/dto/metric.dto";
 
 
-export class IndicatorDto extends BaseClass {
+export class IndicatorDto  {
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID' })
     readonly id: String;
@@ -27,7 +29,7 @@ export class IndicatorDto extends BaseClass {
     @ApiProperty({ example: ComplexStage.one, description: 'Ступень' })
     readonly stage: ComplexStage;
 
-    @ApiProperty({ example: 10, description: 'Показания для золотой медали)' })
+    @ApiProperty({ example: 10, description: 'Показания для золотой медали' })
     readonly goldAnswer: number;
 
     @ApiProperty({ example: 20, description: 'Показания для серебрянной медали' })
@@ -50,15 +52,25 @@ export class IndicatorDto extends BaseClass {
 
     @ApiProperty({ type: [Metric], description: 'Список метрик, необходимых для данного показателя', nullable: true })
     @IsOptional()
-    metrics?: Array<Metric & { HealthIndicatorMeasureTypes: IndicatorMetrics }>;
+    metrics?: Array<MetricDto>;
 
-    @ApiProperty({ description: 'Метрика для границ данного показателя. Например: "Челочный бег на расстнояние 10, 20, 30 м', nullable: true })
+    @ApiProperty({ description: 'Метрика для границ данного показателя. Например: "Челочный бег на расстояние 10, 20, 30 м" - граничная метрика - метры', nullable: true })
     @IsOptional()
-    variantMetric?: Metric;
+    boundaryMetric?: MetricDto;
 
-
-    static fromModel(model: Indicator) {
-        const dto = IndicatorDto.create({ id: model.id, boundaryValues: model.boundaryValues, description: model.description, comment: model.comment, variantMetric: model.variantMetric, metrics: model.metrics, bronzeAnswer: model.bronzeAnswer, goldAnswer: model.goldAnswer, silverAnswer: model.silverAnswer, characteristicType: model.characteristicType, gender: model.gender, stage: model.stage, title: model.title });
-        return dto;
+    constructor(model: Indicator) {
+        this.id = model.id;
+        this.title = model.title;
+        this.gender = model.gender;
+        this.characteristicType = model.characteristicType;
+        this.stage = model.stage;
+        this.goldAnswer = model.goldAnswer;
+        this.silverAnswer = model.silverAnswer;
+        this.bronzeAnswer = model.bronzeAnswer;
+        this.boundaryValues = model.boundaryValues;
+        this.description = model.description;
+        this.comment = model.comment;
+        this.metrics = model.metrics.map(m => new MetricDto(m));
+        this.boundaryMetric = new MetricDto(model.variantMetric);
     }
 }

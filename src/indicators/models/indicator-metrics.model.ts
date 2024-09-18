@@ -1,7 +1,7 @@
 import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Indicator } from "./indicator.model";
 import { ApiProperty } from "@nestjs/swagger";
-import { Metric } from "../metrics/models/metrics.model";
+import { Metric } from "../../metrics/models/metrics.model";
 
 @Table({tableName: 'indicator_metrics', createdAt: false, updatedAt: false})
 export class IndicatorMetrics extends Model<IndicatorMetrics>{

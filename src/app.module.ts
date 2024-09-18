@@ -12,13 +12,15 @@ import { AnswersModule } from './answers/answers.module';
 import { Role } from "./roles/roles.model";
 import { TestingModule } from "@nestjs/testing";
 import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
+import { CitiesModule } from './cities/cities.module';
 
 
 @Module({
     providers: [],
     imports: [
       ConfigModule.forRoot({
-        envFilePath: `.${process.env.NODE_ENV}.env`
+        envFilePath: `.${process.env.NODE_ENV}.env`,
+        
       }),
         SequelizeModule.forRoot({
           dialect: 'postgres',
@@ -46,6 +48,7 @@ import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
         TestingModule,
         AnswersModule,
         PaginationModule.forRoot({ isGlobal: true }),
+        CitiesModule,
       ],
 })
 export class AppModule {}

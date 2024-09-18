@@ -8,6 +8,7 @@ import { BaseClass } from "src/common/base-class";
 import { User } from "../users.model";
 import { GenderEnum } from "../users.const";
 import { RoleDto } from "src/roles/dto/role.dto";
+import { RoleType } from "src/roles/roles.const";
 
 
 
@@ -58,7 +59,7 @@ export class UserDto extends BaseClass {
 
     email: string;
 
-    @ApiProperty({example: [RoleDto], description: 'Роли пользователя'})
+    @ApiProperty({example: [RoleDto.create({id: 1, value: RoleType.ADMIN, description: 'Администратор'}), RoleDto.create({id: 2, value: RoleType.EXAMINED, description: 'Исследуемый'}), ], description: 'Роли пользователя'})
 
     roles: RoleDto[];
 

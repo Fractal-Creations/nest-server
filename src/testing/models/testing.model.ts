@@ -48,7 +48,7 @@ export class Testing extends Model<Testing, TestingCreationAttrs> {
     @HasMany(() => Answer)
      answers?: Answer[];
 
-     @ApiProperty({example: [User], description: 'Список докторов тестирования'})
+     @ApiProperty({example: [User], description: 'Список исследователей, проводивших тестирование'})
     @BelongsToMany(() => User, () => TestingUsers)
      doctors: User[];
 }

@@ -1,0 +1,76 @@
+{   
+    
+    "name": "Олёкминск", 
+    "name_alt": "Олекминск", 
+    "label": "olyokminsk", 
+    "type": "Город", 
+    "typeShort": "г", 
+    "contentType": "city", 
+    "id": "1402300100000", 
+    "okato": "98241501000", 
+    "oktmo": "98641101001", 
+    "guid": "c3aba7f3-caf7-443f-a906-8d79e6ec37f6", 
+    "isDualName": false, 
+    "isCapital": false, 
+    "zip": 678100, 
+    "population": 8398, 
+    "yearFounded": 1635, 
+    "yearCityStatus": 1783, 
+    "name_en": "Olyokminsk", 
+    "namecase": {
+     
+      "nominative": "Олёкминск",
+      "genitive": "Олёкминска", 
+      "dative": "Олёкминску",
+      "accusative": "Олёкминск", 
+      "ablative": "Олёкминском",
+      "prepositional": "Олёкминске",
+      "locative": "Олёкминске" 
+    },
+    "coords": { "lat": 60.3758006, "lon": 120.4060878 },
+    "timezone": {
+        "tzid": "Asia/Yakutsk",
+        "abbreviation": "YAKT",
+        "utcOffset": "UTC+09:00",
+        "mskOffset": "MSK+06"
+    },
+    "region": {
+      
+      "name": "Саха /Якутия/", 
+      "label": "yakutiya", 
+      "type": "Республика", 
+      "typeShort": "Респ", 
+      "contentType": "region", 
+      "id": "1400000000000", 
+      "okato": "98000000000",
+      "oktmo": "98000000", 
+      "guid": "c225d3db-1db6-4063-ace0-b3fe9ea3805f", 
+      "code": "14",
+      "iso_3166-2": "RU-SA", 
+      "population": 995686, 
+      "yearFounded": 1922, 
+      "area": 3083523,
+      "fullname": "Республика Саха /Якутия/",
+      "unofficialName": "Якутия", 
+      "name_en": "Republic of Sakha (Yakutia)",
+      "district": "Дальневосточный", 
+      "namecase": {
+       
+        "nominative": "Республика Саха /Якутия/",
+        "genitive": "Республики Саха /Якутия/",
+        "dative": "Республике Саха /Якутия/",
+        "accusative": "Республику Саха /Якутия/",
+        "ablative": "Республикой Саха /Якутия/",
+        "prepositional": "Республике Саха /Якутия/",
+        "locative": "Республике Саха /Якутия/"
+      },
+      "capital": {
+        "name": "Якутск",
+        "label": "yakutsk",
+        "id": "1400000100000",
+        "okato": "98401000000",
+        "oktmo": "98701000001",
+        "contentType": "city"
+      }
+    }
+  }

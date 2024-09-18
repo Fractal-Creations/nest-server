@@ -8,7 +8,7 @@ interface ComplexCreationAttrs {
     title: string;
     indicators?: string[];
 }
-@Table({tableName: 'complexes', createdAt: false, updatedAt: false})
+@Table({tableName: 'complexes'})
 export class Complex extends Model<Complex, ComplexCreationAttrs>{
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID' })
