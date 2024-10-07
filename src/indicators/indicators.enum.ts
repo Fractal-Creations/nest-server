@@ -1,5 +1,5 @@
 
-export enum TestType{
+export enum IndicatorType{
 
   ///Гимнастический
   gymnastic = 'gymnastic',
@@ -15,4 +15,16 @@ export enum TestType{
 
   /// Медико-психологический
   medPsy = 'medPsy',
+}
+
+export enum IndicatorMandatory {
+
+  /// Обязательный
+  mandatory = 'mandatory',
+
+  /// Исключаемый
+  excluded = 'excluded',
+   
+  /// Возможный 
+  possible = 'possible',
 }

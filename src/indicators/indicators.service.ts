@@ -4,7 +4,7 @@ import { UpdateIndicatorDto } from './dto/update-indicator.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Indicator } from './models/indicator.model';
 import { Complex } from 'src/complexes/models/complex.model';
-import { TestType } from './indicators.enum';
+import { IndicatorType } from './indicators.enum';
 import { Metric } from '../metrics/models/metrics.model';
 import {
   PaginationQuery,
@@ -29,10 +29,10 @@ export class IndicatorsService {
 
   async findOne(id: String) {
     this.logger.debug(`Start seraching  health indicator with id ${ id }`)
-    const indicator = await this.healthIndicatorRepository.findOne({ where: { id } })
+    const indicator = await this.healthIndicatorRepository.findOne({ where: { id }, include: {all: true} })
     if (indicator) {
       this.logger.debug('Indicator successfully found');
-      return indicator;
+      return new IndicatorDto(indicator);
     } else {
       this.logger.debug('Indicator not exists');
       throw new HttpException(`Показатель не существует`, HttpStatus.BAD_REQUEST);
@@ -61,6 +61,8 @@ export class IndicatorsService {
     this.logger.debug(`Start creating new health indicator ${ dto.title }`)
 
     const indicator = await this.healthIndicatorRepository.create(dto);
+    var metrics = Array<Metric>();
+     let  boundaryMetric: Metric | null;
     if (indicator) {
       if (dto.metricsIdList && dto.metricsIdList.length != 0){
         this.logger.debug(`Found ${dto.metricsIdList.length} measures`)
@@ -76,8 +78,15 @@ export class IndicatorsService {
         }
 
         await indicator.$set('metrics', metrics);
+
+        
     } 
-        return indicator;
+    if (dto.boundaryMetricId){
+
+      var id = dto.boundaryMetricId
+      boundaryMetric = await this.metricRepository.findOne({where: { id }})
+    }
+        return new IndicatorDto(indicator, metrics.length > 0 ? metrics : null, boundaryMetric);
     } else {
       this.logger.debug('Indicator not created');
       throw new HttpException(`Не удалось создать показатель`, HttpStatus.BAD_REQUEST);

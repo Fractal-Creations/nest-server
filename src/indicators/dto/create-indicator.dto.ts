@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
-import { TestType } from "../indicators.enum";
+import { IndicatorMandatory, IndicatorType } from "../indicators.enum";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
 
@@ -13,18 +13,20 @@ export class CreateIndicatorDto {
 
     gender: GenderEnum;
 
-    characteristicType: TestType;
+    characteristicType: IndicatorType;
 
     stage: ComplexStage;
 
+    indicatorMandatory: IndicatorMandatory;
+
     @ApiProperty({example: 10, description: 'Показания для золотой медали)'})
-    goldAnswer: number;
+    goldAnswer: string;
 
     @ApiProperty({example: 20, description: 'Показания для серебрянной медали'})
-    silverAnswer: number;
+    silverAnswer: string;
 
     @ApiProperty({example: 30, description: 'Показания для бронзовой медали'})
-    bronzeAnswer: number;
+    bronzeAnswer: string;
     
     @ApiProperty({type: Array<Number>, example: [10, 20, 20], description: 'Список граничных значений (напр. бег на 10, 20, 30 км)', nullable: true, required: false })
     @IsOptional()

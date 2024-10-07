@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
-import { TestType } from "../indicators.enum";
+import { IndicatorMandatory, IndicatorType } from "../indicators.enum";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
 import { BelongsToMany } from "sequelize";
@@ -23,20 +23,23 @@ export class IndicatorDto  {
     @ApiProperty({ example: GenderEnum.MALE, description: 'Пол' })
     readonly gender: GenderEnum;
 
-    @ApiProperty({ example: TestType.gymnastic, description: 'Тип теста' })
-    readonly characteristicType: TestType;
+    @ApiProperty({ example: IndicatorType.gymnastic, description: 'Тип теста' })
+    readonly characteristicType: IndicatorType;
 
     @ApiProperty({ example: ComplexStage.one, description: 'Ступень' })
     readonly stage: ComplexStage;
 
+    @ApiProperty({example: IndicatorMandatory.mandatory, description: 'Обязательность испытания'})
+    readonly indicatorMandatory: IndicatorMandatory;
+
     @ApiProperty({ example: 10, description: 'Показания для золотой медали' })
-    readonly goldAnswer: number;
+    readonly goldAnswer: string;
 
     @ApiProperty({ example: 20, description: 'Показания для серебрянной медали' })
-    readonly silverAnswer: number;
+    readonly silverAnswer: string;
 
     @ApiProperty({ example: 30, description: 'Показания для бронзовой медали' })
-    readonly bronzeAnswer: number;
+    readonly bronzeAnswer: string;
 
     @ApiProperty({ type: Array<Number>, example: [10, 20, 20], description: 'Список граничных значений (напр. бег на 10, 20, 30 км)', nullable: true, required: false })
     @IsOptional()
@@ -58,19 +61,21 @@ export class IndicatorDto  {
     @IsOptional()
     boundaryMetric?: MetricDto;
 
-    constructor(model: Indicator) {
+    constructor(model: Indicator, metrics?: Metric[], boundaryMetric?: Metric) {
         this.id = model.id;
         this.title = model.title;
         this.gender = model.gender;
         this.characteristicType = model.characteristicType;
         this.stage = model.stage;
+        this.indicatorMandatory = model.indicatorMandatory;
         this.goldAnswer = model.goldAnswer;
         this.silverAnswer = model.silverAnswer;
         this.bronzeAnswer = model.bronzeAnswer;
         this.boundaryValues = model.boundaryValues;
         this.description = model.description;
         this.comment = model.comment;
-        this.metrics = model.metrics.map(m => new MetricDto(m));
-        this.boundaryMetric = new MetricDto(model.variantMetric);
+        this.metrics = metrics?.map(m => new MetricDto(m)) ?? model.metrics?.map(m => new MetricDto(m));
+        this.boundaryMetric = model.variantMetric != null ?  new MetricDto(model.variantMetric) : boundaryMetric != null ?   new MetricDto(boundaryMetric) : null;
     }
+    
 }

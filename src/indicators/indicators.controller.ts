@@ -4,7 +4,7 @@ import { CreateIndicatorDto } from './dto/create-indicator.dto';
 import { UpdateIndicatorDto } from './dto/update-indicator.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleType } from 'src/roles/roles.const';
-import { TestType } from './indicators.enum';
+import { IndicatorMandatory, IndicatorType } from './indicators.enum';
 import { GenderEnum } from 'src/users/users.const';
 import { ComplexStage } from 'src/complexes/complexes.const';
 import { IndicatorDto } from './dto/indicator.dto';
@@ -24,21 +24,23 @@ export class IndicatorsController {
 
   @ApiOperation({ summary: 'Создание нового индикатора' })
   @ApiResponse({ status: 200, type: IndicatorDto })
-  @ApiQuery({ name: 'type', enum: TestType })
-  @ApiQuery({ name: 'gender', enum: GenderEnum })
+  @ApiQuery({ name: 'type', enum: IndicatorType })
   @ApiQuery({ name: 'gender', enum: GenderEnum })
   @ApiQuery({ name: 'stage', enum: ComplexStage})
+  @ApiQuery({ name: 'mandatory', enum: IndicatorMandatory})
   @Post()
   create(
-    @Query('type') type: TestType = TestType.athletics,
+    @Query('type') type: IndicatorType = IndicatorType.athletics,
     @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
     @Query('stage') stage: ComplexStage = ComplexStage.one,
-    @Body() userDto: CreateIndicatorDto,
+    @Query('mandatory') mandatory: IndicatorMandatory = IndicatorMandatory.mandatory,
+    @Body() indicatorDto: CreateIndicatorDto,
   ) {
-    userDto.characteristicType = type;
-    userDto.gender = gender;
-    userDto.stage = stage;
-    return this.healthIndicatorsService.create(userDto);
+    indicatorDto.characteristicType = type;
+    indicatorDto.gender = gender;
+    indicatorDto.stage = stage;
+    indicatorDto.indicatorMandatory = mandatory;
+    return this.healthIndicatorsService.create(indicatorDto);
   }
 
   @ApiOperation({ summary: 'Поиск индикаторов' })

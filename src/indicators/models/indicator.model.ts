@@ -2,7 +2,7 @@ import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { IndicatorMetrics } from "./indicator-metrics.model";
 import { IsOptional } from "class-validator";
-import { TestType } from "../indicators.enum";
+import { IndicatorMandatory, IndicatorType } from "../indicators.enum";
 import { Complex } from "src/complexes/models/complex.model";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
@@ -12,12 +12,13 @@ import { MetricDto } from "../../metrics/dto/metric.dto";
 
 interface HealthIndicatorCreationAttrs {
     title: string;
-    characteristicType: TestType
+    characteristicType: IndicatorType
     gender: GenderEnum;
     stage: ComplexStage;
-    goldAnswer: number;
-    silverAnswer: number;
-    bronzeAnswer: number;
+    indicatorMandatory: IndicatorMandatory;
+    goldAnswer: string;
+    silverAnswer: string;
+    bronzeAnswer: string;
     description?: string;
     comment?: string;
     measures?: string[];
@@ -42,21 +43,25 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
     @Column({type: DataType.ENUM, values: Object.values(GenderEnum), allowNull: false})
     gender: GenderEnum;
 
-    @ApiProperty({example: TestType.gymnastic, description: 'Тип теста'})
-    @Column({type: DataType.ENUM, values: Object.values(TestType), allowNull: false})
-    characteristicType: TestType;
+    @ApiProperty({example: IndicatorMandatory.excluded, description: 'Обязательность испытания'})
+    @Column({type: DataType.ENUM, values: Object.values(IndicatorMandatory), allowNull: false, defaultValue: IndicatorMandatory.excluded})
+    indicatorMandatory: IndicatorMandatory;
+
+    @ApiProperty({example: IndicatorType.gymnastic, description: 'Тип теста'})
+    @Column({type: DataType.ENUM, values: Object.values(IndicatorType), allowNull: false})
+    characteristicType: IndicatorType;
 
     @ApiProperty({example: 10, description: 'Показания для золотой медали'})
     @Column({type: DataType.STRING, allowNull: false})
-    goldAnswer: number;
+    goldAnswer: string;
 
     @ApiProperty({example: 20, description: 'Показания для серебрянной медали'})
     @Column({type: DataType.STRING, allowNull: false})
-    silverAnswer: number;
+    silverAnswer: string;
 
     @ApiProperty({example: 30, description: 'Показания для бронзвовой медали'})
     @Column({type: DataType.STRING, allowNull: false})
-    bronzeAnswer: number;
+    bronzeAnswer: string;
     
     @ApiProperty({type: Array<Number>, example: [10.0, 20.0, 30.0], description: 'Список граничных значений (напр. бег на 10, 20, 30 км)', nullable: true, required: false })
     @Column({type: DataType.ARRAY(DataType.FLOAT), allowNull: true})
@@ -85,8 +90,8 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID метрики граница данного показателя' })
     @ForeignKey(() => Metric)
-    @Column({type: DataType.UUID, allowNull: false})
-    readonly boundaryMetricId: string 
+    @Column({type: DataType.UUID, allowNull: true})
+    readonly boundaryMetricId?: string 
 
     @ApiHideProperty()  
     @BelongsToMany(() => Complex, () => ComplexIndicators)
