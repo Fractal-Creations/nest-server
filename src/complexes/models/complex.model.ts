@@ -3,6 +3,7 @@ import { BelongsToMany, Column, DataType, ForeignKey, Model, Table } from "seque
 import { ComplexIndicators } from "./complex-indicators.model";
 import { GenderEnum } from "src/users/users.const";
 import { Indicator } from "src/indicators/models/indicator.model";
+import { ComplexStage } from "../complexes.const";
 
 interface ComplexCreationAttrs {
     title: string;
@@ -19,13 +20,13 @@ export class Complex extends Model<Complex, ComplexCreationAttrs>{
     @Column({type: DataType.STRING, allowNull: false})
     readonly title: string;
     
-    @ApiProperty({example: 10, description: 'Ступень'})
-    @Column({type: DataType.INTEGER, allowNull: false})
-    readonly stage: number;
+    @ApiProperty({example: ComplexStage.one, description: 'Ступень'})
+    @Column({type: DataType.ENUM, values: Object.values(ComplexStage), allowNull: false})
+    readonly stage: ComplexStage;
 
     @ApiProperty({example: GenderEnum.MALE, description: 'Пол'})
-    @Column({type: DataType.STRING})
-    readonly gender: string;
+    @Column({type: DataType.ENUM, values: Object.values(GenderEnum), allowNull: false})
+    readonly gender: GenderEnum;
 
     @ApiProperty({type: [Indicator], description: 'Список показателей, прикрепленных к данному комплексу'})
     @BelongsToMany(() => Indicator, () => ComplexIndicators)

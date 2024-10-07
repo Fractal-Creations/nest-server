@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CreateSurveyDto } from './dto/create-complex.dto';
+import { CreateSurveyDto as CreateComplexDto } from './dto/create-complex.dto';
 import { UpdateSurveyDto } from './dto/update-complex.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Includeable, Op } from 'sequelize';
@@ -10,25 +10,30 @@ import {
   PaginationResponse,
   PaginationService,
 } from '@ntheanh201/nestjs-sequelize-pagination';
+import { ComplexDto } from './dto/complex.dto';
+import { PaginationComplexDto } from './dto/pagination-complex.dto';
+import { title } from 'process';
 
 @Injectable()
 export class ComplexesService {
   private readonly logger = new Logger(ComplexesService.name);
 
   constructor(
-    @InjectModel(Complex) private surveyRepository: typeof Complex,
+    @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(Indicator) private healthIndicatorRepository: typeof Indicator,
     private paginationService: PaginationService
   ) { }
-  async create(createSurveyDto: CreateSurveyDto) {
-    this.logger.debug(`Start creating new survey indicator ${ createSurveyDto.title }`)
-    const survey = await this.surveyRepository.create(createSurveyDto);
-    if (survey){
-      if (createSurveyDto.indicators && createSurveyDto.indicators.length != 0){
-        this.logger.debug(`Found ${createSurveyDto.indicators.length} indicators`)
-        var indicators = Array<Indicator>();
-        for (var i =0; i < createSurveyDto.indicators.length; i++){
-          var id = createSurveyDto.indicators.at(i);
+  async create(createComplexDto: CreateComplexDto) {
+    if (createComplexDto.indicators.length != 12){
+      throw new HttpException(`Количество индикаторов должно быть 12`, HttpStatus.BAD_REQUEST);
+    }
+    this.logger.debug(`Start creating new complex ${ createComplexDto.title }`)
+    const complex = await this.complexRepository.create(createComplexDto);
+    var indicators = Array<Indicator>();
+    if (complex){
+        this.logger.debug(`Found ${createComplexDto.indicators.length} indicators`)
+        for (var i =0; i < createComplexDto.indicators.length; i++){
+          var id = createComplexDto.indicators.at(i);
           this.logger.debug(`Lets find indicator with id ${id}`)
           var indicator = await this.healthIndicatorRepository.findOne({where: {id}});
           if (indicator){
@@ -36,63 +41,55 @@ export class ComplexesService {
             this.logger.debug(`Added ${indicator.title} indicator`)
           }
         }
-        await survey.$set('indicators', indicators)
-      }
-      this.logger.debug('Survey are created');
-       return survey;
+        await complex.$set('indicators', indicators)
+      this.logger.debug('Complex are created');
+      return new ComplexDto(complex, indicators);
     } else {
-      this.logger.debug('Indicator not created');
-      throw new HttpException(`Не удалось создать опросник`, HttpStatus.BAD_REQUEST);
+      this.logger.debug('Complex not created');
+      throw new HttpException(`Не удалось создать комплекс`, HttpStatus.BAD_REQUEST);
     }
   }
-
-  /* async findAll() {
-    const surveys = await this.surveyRepository.findAll({include: {all: true, nested: true}});
-    if (surveys) {
-      return surveys;
-    } else {
-      throw new HttpException(`Таблица не найдена или повреждена `, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  } */
 
   async findAll(
     paginationOptions: PaginationQuery,
     include: Includeable | Includeable[] = [],
-  ): Promise<PaginationResponse<Complex>> {
+  ): Promise<PaginationComplexDto> {
     let whereCondition;
     const keySearch = paginationOptions?.searchKey;
     if (keySearch) {
       whereCondition = {
         [Op.or]: [
-          { sku: { [Op.like]: `%${keySearch}%` } },
-          { barcode: { [Op.like]: `%${keySearch}%` } },
-          { name: { [Op.like]: `%${keySearch}%` } },
+          { title: { [Op.like]: `%${keySearch}%` } },
         ],
       };
     }
 
-    return this.paginationService.findAll(
+    var response = (await this.paginationService.findAll<Complex>(
       {
         ...paginationOptions,
         model: Complex,
       },
       {
         where: whereCondition,
+        // FIXME: разобраться, как вкладывать индикаторы, но не учитывать их при подсчете
         include,
+
       },
-    );
+    ));
+    this.logger.debug(response.total);
+    return new PaginationComplexDto(response);
   }
 
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} survey`;
   }
 
-  update(id: number, updateSurveyDto: UpdateSurveyDto) {
+  update(id: string, updateSurveyDto: UpdateSurveyDto) {
     return `This action updates a #${id} survey`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} survey`;
   }
 

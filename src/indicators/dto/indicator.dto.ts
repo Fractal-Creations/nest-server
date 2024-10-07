@@ -3,12 +3,8 @@ import { IsOptional } from "class-validator";
 import { IndicatorMandatory, IndicatorType } from "../indicators.enum";
 import { GenderEnum } from "src/users/users.const";
 import { ComplexStage } from "src/complexes/complexes.const";
-import { BelongsToMany } from "sequelize";
 import { Metric } from "../../metrics/models/metrics.model";
-import { IndicatorMetrics } from "../models/indicator-metrics.model";
-import { BaseClass } from "src/common/base-class";
 import { Indicator } from "../models/indicator.model";
-import { plainToInstance } from "class-transformer";
 import { MetricDto } from "src/metrics/dto/metric.dto";
 
 

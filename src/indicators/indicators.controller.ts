@@ -23,7 +23,7 @@ export class IndicatorsController {
 
 
   @ApiOperation({ summary: 'Создание нового индикатора' })
-  @ApiResponse({ status: 200, type: IndicatorDto })
+  @ApiResponse({ status: 201, type: IndicatorDto })
   @ApiQuery({ name: 'type', enum: IndicatorType })
   @ApiQuery({ name: 'gender', enum: GenderEnum })
   @ApiQuery({ name: 'stage', enum: ComplexStage})

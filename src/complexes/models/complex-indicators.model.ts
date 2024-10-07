@@ -12,9 +12,9 @@ export class ComplexIndicators extends Model<ComplexIndicators>{
 
     @ForeignKey(()=> Indicator)
     @Column({type: DataType.UUIDV4, allowNull: false})
-    readonly healthIndicatorId: string;
+    readonly indicatorId: string;
 
     @ForeignKey(() => Complex)
     @Column({type: DataType.UUIDV4, allowNull: false})
-    readonly surveyId: string;
+    readonly complexId: string;
 }

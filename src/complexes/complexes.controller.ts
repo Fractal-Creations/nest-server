@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ComplexesService } from './complexes.service';
 import { CreateSurveyDto } from './dto/create-complex.dto';
 import { UpdateSurveyDto } from './dto/update-complex.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Complex } from './models/complex.model';
 import { AddIndicatorDto } from './dto/add-indicator.dto';
 import {
@@ -10,6 +10,10 @@ import {
   PaginationResponse,
   Pagination
 } from '@ntheanh201/nestjs-sequelize-pagination';
+import { ComplexDto } from './dto/complex.dto';
+import { PaginationComplexDto } from './dto/pagination-complex.dto';
+import { GenderEnum } from 'src/users/users.const';
+import { ComplexStage } from './complexes.const';
 
 @ApiTags('Комплексы')
 @Controller('complexes')
@@ -17,16 +21,24 @@ export class SurveysController {
   constructor(private readonly surveysService: ComplexesService) {}
 
   @ApiOperation({summary: 'Добавление комплекса'})
-  @ApiResponse({status: 201, type: Complex})
+  @ApiResponse({status: 201, type: ComplexDto})
+  @ApiQuery({ name: 'gender', enum: GenderEnum})
+  @ApiQuery({ name: 'stage', enum: ComplexStage})
   @Post()
-  create(@Body() createSurveyDto: CreateSurveyDto) {
+  async create(
+    @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
+    @Query('stage') stage: ComplexStage = ComplexStage.one,
+    @Body() createSurveyDto: CreateSurveyDto
+  ) : Promise<ComplexDto> {
+    createSurveyDto.gender = gender;
+    createSurveyDto.stage = stage;
     return this.surveysService.create(createSurveyDto);
   }
 
   @ApiOperation({summary: 'Получить все комплексы'})
-  @ApiResponse({status: 200, type: [Complex]})
+  @ApiResponse({status: 200, type: [ComplexDto]})
   @Get()
-  findAll(
+  async findAll(
     @Pagination({
       limit: 10,
       page: 0,
@@ -34,29 +46,29 @@ export class SurveysController {
       orderDirection: 'DESC',
     })
     pagination: PaginationQuery,
-  ): Promise<PaginationResponse<Complex>> {
-    return this.surveysService.findAll(pagination);
+  ): Promise<PaginationComplexDto> {
+    return this.surveysService.findAll(pagination, {all: true, nested: true});
   }
 
   @ApiOperation({summary: 'Получить комплекс по id'})
   @ApiResponse({status: 200, type: Complex})
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.surveysService.findOne(+id);
+    return this.surveysService.findOne(id);
   }
 
   @ApiOperation({summary: 'Обновить комплекс по id'})
   @ApiResponse({status: 200, type: Complex})
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSurveyDto: UpdateSurveyDto) {
-    return this.surveysService.update(+id, updateSurveyDto);
+    return this.surveysService.update(id, updateSurveyDto);
   }
 
   @ApiOperation({summary: 'Удалить комплекс по id'})
   @ApiResponse({status: 200, type: Complex})
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.surveysService.remove(+id);
+    return this.surveysService.remove(id);
   }
 
   @ApiOperation({ summary: 'Добавить индикатор к комплексу' })
