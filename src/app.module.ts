@@ -1,18 +1,18 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { User } from "./users/users.model";
-import { UsersModule } from "./users/users.module";
-import { RolesModule } from './roles/roles.module';
-import { UserRoles } from "./roles/user-roles.model";
-import { AuthModule } from './auth/auth.module';
-import { IndicatorsModule } from './indicators/indicators.module';
-import { ComplexesModule } from './complexes/complexes.module';
-import { AnswersModule } from './answers/answers.module';
-import { Role } from "./roles/roles.model";
+import { User } from "./feature/users/users.model";
+import { UsersModule } from "./feature/users/users.module";
+import { RolesModule } from './feature/roles/roles.module';
+import { UserRoles } from "./feature/roles/user-roles.model";
+import { IndicatorsModule } from './feature/indicators/indicators.module';
+import { ComplexesModule } from './feature/complexes/complexes.module';
+import { AnswersModule } from './feature/answers/answers.module';
+import { Role } from "./feature/roles/roles.model";
 import { TestingModule } from "@nestjs/testing";
 import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
-import { CitiesModule } from './cities/cities.module';
+import { CitiesModule } from './feature/cities/cities.module';
+import { AuthModule } from "./feature/auth/auth.module";
 
 
 @Module({

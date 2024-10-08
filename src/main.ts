@@ -1,10 +1,8 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { JwtService } from "@nestjs/jwt";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { CustomValidationPipe } from "./pipes/validation.pipe";
-import { TransformInterceptor } from "./common/transform.interceptors";
+import { TransformInterceptor } from "./core/interceptors/transform.interceptors";
 
 
 async function start() {
