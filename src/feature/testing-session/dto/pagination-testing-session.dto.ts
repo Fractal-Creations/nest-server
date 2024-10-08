@@ -1,11 +1,12 @@
 import { PaginationResponse } from "@ntheanh201/nestjs-sequelize-pagination/dist/pagination.entity";
-import { ApiProperty } from "@nestjs/swagger/dist/decorators/api-property.decorator";
-import { Complex } from "../models/complex.model";
-import { ComplexDto } from "./complex.dto";
+import { TestingSessionDto } from "./testing-session.dto";
+import { PaginationComplexDto } from "src/feature/complexes/dto/pagination-complex.dto";
+import { ApiProperty } from "@nestjs/swagger";
+import { TestingSession } from "../models/testing-session.model";
 
-export class PaginationComplexDto implements PaginationResponse<ComplexDto> {
-    @ApiProperty({ example: [ComplexDto], description: 'Список найденных комплексов' })
-    data: ComplexDto[];
+export class PaginationTestingSessionDto implements PaginationResponse<TestingSessionDto>{
+    @ApiProperty({ example: [TestingSessionDto], description: 'Список найденных комплексов' })
+    data: TestingSessionDto[];
     @ApiProperty({ example: 1, description: 'Количество найденных объектов' })
     total: number;
     @ApiProperty({ example: 1, description: 'Количество страниц' })
@@ -21,12 +22,11 @@ export class PaginationComplexDto implements PaginationResponse<ComplexDto> {
     @ApiProperty({ example: 'Давление', description: 'Поисковая строка' })
     searchKey?: string;
 
-    constructor(response: PaginationResponse<Complex> ) {
-        this.data = response.data.map((dto) => new ComplexDto(dto)) 
+    constructor(response: PaginationResponse<TestingSession> ) {
+        this.data = response.data.map((dto) => new TestingSessionDto(dto)) 
         this.total = response.total
         this.totalPages = response.totalPages
         this.page = response.page
         this.limit = response.limit
     }
-
 }

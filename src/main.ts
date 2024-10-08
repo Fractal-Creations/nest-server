@@ -6,6 +6,8 @@ import { TransformInterceptor } from "./core/interceptors/transform.interceptors
 
 
 async function start() {
+//console.log(process.env)
+
     const PORT = process.env.PORT || 5003
     const app = await NestFactory.create(AppModule, {
         logger: ['log', 'error', 'warn', 'debug'],
@@ -31,7 +33,6 @@ async function start() {
     SwaggerModule.setup('api/docs', app, document)
         
     await app.listen(PORT, () => console.log(`Server started on port = ${ PORT }`))
-
 }
 
 start()

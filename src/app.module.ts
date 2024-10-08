@@ -7,12 +7,11 @@ import { RolesModule } from './feature/roles/roles.module';
 import { UserRoles } from "./feature/roles/user-roles.model";
 import { IndicatorsModule } from './feature/indicators/indicators.module';
 import { ComplexesModule } from './feature/complexes/complexes.module';
-import { AnswersModule } from './feature/answers/answers.module';
 import { Role } from "./feature/roles/roles.model";
-import { TestingModule } from "@nestjs/testing";
 import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
 import { CitiesModule } from './feature/cities/cities.module';
 import { AuthModule } from "./feature/auth/auth.module";
+import { TestingSessionModule } from "./feature/testing-session/testing-session.module";
 
 
 @Module({
@@ -45,8 +44,7 @@ import { AuthModule } from "./feature/auth/auth.module";
         AuthModule,
         ComplexesModule,
         IndicatorsModule,
-        TestingModule,
-        AnswersModule,
+        TestingSessionModule,
         PaginationModule.forRoot({ isGlobal: true }),
         CitiesModule,
       ],

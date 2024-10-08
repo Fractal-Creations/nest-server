@@ -34,7 +34,7 @@ export class RolesService {
 
     async getRoleById(id: number) : Promise<Role>{
         const role = await this.roleRepository.findOne({where: {id}})
-        if (role)   role
+        if (role)  return role
         throw new HttpException('Роль не существует', HttpStatus.BAD_REQUEST);
         
     }

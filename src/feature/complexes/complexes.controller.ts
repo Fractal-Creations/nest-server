@@ -47,7 +47,7 @@ export class SurveysController {
     })
     pagination: PaginationQuery,
   ): Promise<PaginationComplexDto> {
-    return this.surveysService.findAll(pagination, {all: true, nested: true});
+    return this.surveysService.findAll(pagination);
   }
 
   @ApiOperation({summary: 'Получить комплекс по id'})

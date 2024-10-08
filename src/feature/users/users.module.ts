@@ -7,14 +7,14 @@ import { UsersController } from './users.controller';
 import { User } from './users.model';
 import { UsersService } from './users.service';
 import { TestingModule } from '@nestjs/testing';
-import { Testing } from '../testing/models/testing.model';
+import { TestingSession } from '../testing-session/models/testing-session.model';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    SequelizeModule.forFeature([User,  Role, Testing]),
+    SequelizeModule.forFeature([User,  Role, TestingSession]),
     RolesModule,
     forwardRef(() => AuthModule),
 

@@ -1,0 +1,108 @@
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { CreateTestingDto as CreateTestingSessionDto } from './dto/create-testing-session.dto';
+import { UpdateTestingDto } from './dto/update-testing-session.dto';
+import { IndicatorsService } from '../indicators/indicators.service';
+import { PaginationService } from '@ntheanh201/nestjs-sequelize-pagination/dist/pagination.service';
+import { InjectModel } from '@nestjs/sequelize/dist/common/sequelize.decorators';
+import { TestingSession } from './models/testing-session.model';
+import { Complex } from '../complexes/models/complex.model';
+import { User } from '../users/users.model';
+import { TestingSessionDto } from './dto/testing-session.dto';
+import { PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
+import { PaginationTestingSessionDto } from './dto/pagination-testing-session.dto';
+import { Includeable, Op } from 'sequelize';
+import { UserUtils } from '../common/utils/user.util';
+
+@Injectable()
+export class TestingSessionService {
+
+  constructor(
+    @InjectModel(TestingSession) private testingRepository: typeof TestingSession,
+    @InjectModel(Complex) private complexRepository: typeof Complex,
+    @InjectModel(User) private userRepository: typeof User,
+    private paginationService: PaginationService
+  ) { }
+  private readonly logger = new Logger(IndicatorsService.name);
+
+  async create(createTestingSessionDto: CreateTestingSessionDto) {
+    this.logger.debug(`Start creating new testing session`)
+    const complex = await this.complexRepository.findOne({ where: { id: createTestingSessionDto.complexId}, include: {all: true} } );
+    if (!complex) {
+      this.logger.debug('Cant find complex');
+      throw new HttpException(`Не удалось найти комплекс`, HttpStatus.BAD_REQUEST);
+    }
+    const subject = await this.userRepository.findOne({ where: { id: createTestingSessionDto.subjectId } });
+    if (!subject) {
+      this.logger.debug('Cant find subject');
+      throw new HttpException(`Не удалось найти испытуемого`, HttpStatus.BAD_REQUEST);
+    }
+    const reserahcer = await this.userRepository.findOne({ where: { id: createTestingSessionDto.researchersIds.at(0) } });
+    if (!reserahcer) {
+      this.logger.debug('Cant find researcher');
+      throw new HttpException(`Не удалось найти исследователя`, HttpStatus.BAD_REQUEST);
+    }
+
+    if (complex && subject && reserahcer) {
+      createTestingSessionDto.subjectName = UserUtils.getFio(subject);
+      const testingSession = await this.testingRepository.create(createTestingSessionDto);
+      if (testingSession) {
+        this.logger.debug('Testing session successfully created');
+        return new TestingSessionDto(testingSession, complex, subject, [reserahcer]);
+      }
+      else {
+        this.logger.debug('Testing session not created');
+        throw new HttpException(`Не удалось создать сеанс тестирования`, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+  }
+
+  async findAll(
+    paginationOptions: PaginationQuery,
+    include: Includeable | Includeable[] = [],
+  ): Promise<PaginationTestingSessionDto> {
+    let whereCondition;
+    const keySearch = paginationOptions?.searchKey;
+    if (keySearch) {
+      whereCondition = {
+        [Op.or]: [
+          { title: { [Op.like]: `%${keySearch}%` } },
+        ],
+      };
+    }
+
+    var response = (await this.paginationService.findAll<TestingSession>(
+      {
+        ...paginationOptions,
+        model: Complex,
+      },
+      {
+        where: whereCondition,
+        include,
+
+      },
+    ));
+
+    return new PaginationTestingSessionDto(response);
+  }
+
+  async findOne(id: string) {
+    this.logger.debug(`Start seraching testing session with id ${ id }`)
+    const testingSession = await this.testingRepository.findOne({ where: { id }, include: {all: true, nested: true} })
+    if (testingSession) {
+      this.logger.debug('Testing session successfully found');
+      return new TestingSessionDto(testingSession);
+    } else {
+      this.logger.debug('Testing session not exists');
+      throw new HttpException(`Сеанс тестирования не существует`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  update(id: number, updateMonitoringDto: UpdateTestingDto) {
+    return `This action updates a #${ id } monitoring`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${ id } monitoring`;
+  }
+}

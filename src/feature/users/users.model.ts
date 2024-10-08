@@ -39,17 +39,25 @@ export class User extends Model<User, UserCreationAttrs>{
     @Column({type: DataType.DATEONLY})
     readonly birthDate: Date;
 
-    @ApiProperty({example: 'Москва', description: 'Родной город'})
+    @ApiProperty({example: 'Москва', description: 'Название родного города'})
     @Column({type: DataType.STRING, allowNull: true})
     readonly nativeCity?: string;
+
+    @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID родного города из системы ФИАС'})
+    @Column({type: DataType.UUID})
+    readonly nativeCityFiasId: string;
 
     @ApiProperty({example: true, description: 'Коренной житель родного города?'})
     @Column({type: DataType.BOOLEAN, allowNull: true})
     readonly isNative?: boolean;
 
-    @ApiProperty({example: 'Москва', description: 'Город проживания на настоящий момент'})
+    @ApiProperty({example: 'Москва', description: 'Название города проживания на настоящий момент'})
     @Column({type: DataType.STRING, allowNull: true})
     readonly currentCity?: string;
+
+    @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID города проживания из системы ФИАС'})
+    @Column({type: DataType.UUID})
+    readonly currentCityFiasId: string;
 
 
     @ApiProperty({example: '+79990001122', description: 'Номер телефона'})

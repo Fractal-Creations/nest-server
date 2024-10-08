@@ -28,7 +28,7 @@ export class IndicatorsService {
 
 
   async findOne(id: String) {
-    this.logger.debug(`Start seraching  health indicator with id ${ id }`)
+    this.logger.debug(`Start seraching health indicator with id ${ id }`)
     const indicator = await this.healthIndicatorRepository.findOne({ where: { id }, include: {all: true} })
     if (indicator) {
       this.logger.debug('Indicator successfully found');

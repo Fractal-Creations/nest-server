@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Table,  Model, Column, DataType, HasMany, ForeignKey, BelongsTo } from "sequelize-typescript";
-import { Testing } from "src/feature/testing/models/testing.model";
+import { TestingSession } from "src/feature/testing-session/models/testing-session.model";
 import { User } from "src/feature/users/users.model";
 
 @Table({tableName: 'answers'})
@@ -14,9 +14,9 @@ export class Answer extends Model<Answer>{
     readonly score: number;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID мониторинга' })
-    @ForeignKey(() => Testing)
+    @ForeignKey(() => TestingSession)
     @Column({type: DataType.UUID, allowNull: false})
-    readonly testingId: string;
+    readonly testingSessionId: string;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID пациента' })
     @ForeignKey(() => User)

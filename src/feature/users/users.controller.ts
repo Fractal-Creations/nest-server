@@ -72,9 +72,9 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Присвоить роль пользователю' })
     @ApiResponse({ status: 200 })
-    @UseGuards(JwtAuthGuard)
-    @Roles(RoleType.ADMIN)
-    @UseGuards(RolesGuard)
+    //@UseGuards(JwtAuthGuard)
+    //@Roles(RoleType.ADMIN)
+    //@UseGuards(RolesGuard)
     @Post('/role')
     async addRole(@Body() dto: AddRoleDto) : Promise<RoleDto> {
         return RoleDto.fromModel(await this.userService.addRole(dto));

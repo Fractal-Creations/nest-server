@@ -1,9 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsDateString, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString, Length } from "class-validator";
-import { AllowNull } from "sequelize-typescript";
 import { ValidationMessage } from "src/core/exceptions/validation.message";
 import {  RoleType } from "src/feature/roles/roles.const";
-import { Role } from "src/feature/roles/roles.model";
 import { GenderEnum } from "../users.const";
 
 export class CreateUserDto{
@@ -37,6 +35,9 @@ export class CreateUserDto{
     @ApiProperty({example: 'Москва', description: 'Родной город'})
     readonly nativeCity?: string;
 
+    @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID родного города из системы ФИАС'})
+    readonly nativeCityFiasId?: string;
+
     @IsOptional()
     @IsBoolean()
     @ApiProperty({example: true, description: 'Коренной житель', nullable: true})
@@ -46,6 +47,9 @@ export class CreateUserDto{
     @IsString()
     @ApiProperty({example: 'Москва', description: 'Город проживания на настоящий момент'})
     readonly currentCity?: string;
+
+    @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID города проживания из системы ФИАС'})
+    readonly currentCityFiasId?: string;
 
     @IsPhoneNumber('RU')
     @IsNotEmpty({message: ValidationMessage.isEmpty})

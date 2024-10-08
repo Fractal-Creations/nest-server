@@ -71,18 +71,24 @@ export class ComplexesService {
       },
       {
         where: whereCondition,
-        // FIXME: разобраться, как вкладывать индикаторы, но не учитывать их при подсчете
         include,
-
       },
     ));
-    this.logger.debug(response.total);
     return new PaginationComplexDto(response);
   }
 
 
-  findOne(id: string) {
-    return `This action returns a #${id} survey`;
+  async findOne(id: string) {
+    this.logger.debug(`Start seraching complex with id ${ id }`)
+    const complex = await  this.complexRepository.findOne({ where: { id }, include: {all: true} })
+    if (complex) {
+      this.logger.debug('Complex successfully found');
+      return new ComplexDto(complex);
+    } else {
+      this.logger.debug('Complex not exists');
+      throw new HttpException(`Комплекс не существует`, HttpStatus.BAD_REQUEST);
+    }
+
   }
 
   update(id: string, updateSurveyDto: UpdateSurveyDto) {
