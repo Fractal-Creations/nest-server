@@ -20,7 +20,7 @@ export class TestingSessionDto {
     currentIndicatorNumber: number;
 
     @ApiProperty({ example: ComplexDto, description: 'Комплекс ГТО' })
-    readonly complex?: ComplexDto
+     complex?: ComplexDto
 
     @ApiProperty({ description: 'Испытуемый' })
     readonly subject?: UserDto;

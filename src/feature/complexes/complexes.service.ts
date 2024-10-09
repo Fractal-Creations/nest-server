@@ -81,7 +81,7 @@ export class ComplexesService {
 
   async findOne(id: string) {
     this.logger.debug(`Start seraching complex with id ${ id }`)
-    const complex = await  this.complexRepository.findOne({ where: { id }, include: {all: true} })
+    const complex = await  this.complexRepository.findOne({ where: { id }, include: {all: true, nested: true} })
     if (complex) {
       this.logger.debug('Complex successfully found');
       return new ComplexDto(complex);

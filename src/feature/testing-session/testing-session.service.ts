@@ -14,6 +14,8 @@ import { Includeable, Op } from 'sequelize';
 import { UserUtils } from '../common/utils/user.util';
 import { AppConst } from 'src/core/app.const';
 import { TestingSessionStatus } from './testing-session.enum';
+import { ComplexesService } from '../complexes/complexes.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class TestingSessionService {
@@ -22,6 +24,8 @@ export class TestingSessionService {
     @InjectModel(TestingSession) private testingRepository: typeof TestingSession,
     @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(User) private userRepository: typeof User,
+    private userService: UsersService,
+    private complexesService: ComplexesService,
     private paginationService: PaginationService
   ) { }
   private readonly logger = new Logger(IndicatorsService.name);
@@ -89,10 +93,15 @@ export class TestingSessionService {
 
   async findOne(id: string) {
     this.logger.debug(`Start seraching testing session with id ${ id }`)
-    const testingSession = await this.testingRepository.findOne({ where: { id }, include: { all: true, nested: true } })
+    /// FIXME: разобраться, как применить сортировку для вложенных моделей
+    //const testingSession = await this.testingRepository.findOne({ where: { id },  include: [{model: User, as: 'subject'},  {model: Complex, as: 'complex', all: true, nested: true}] })
+    const testingSession = await this.testingRepository.findOne({ where: { id },  include: {all: true, nested: true} })
     if (testingSession) {
+      const dto = new TestingSessionDto(testingSession);
       this.logger.debug('Testing session successfully found');
-      return new TestingSessionDto(testingSession);
+      const complex = await this.complexesService.findOne(testingSession.complexId);
+      dto.complex = complex;
+      return dto;
     } else {
       this.logger.debug('Testing session not exists');
       throw new HttpException(`Сеанс тестирования не существует`, HttpStatus.BAD_REQUEST);

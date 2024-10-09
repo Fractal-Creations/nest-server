@@ -16,6 +16,7 @@ import { IndicatorsModule } from 'src/feature/indicators/indicators.module';
       ComplexIndicators,
       Indicator,
     ]),
-  ]
+  ],
+  exports: [ComplexesService],
 })
 export class ComplexesModule {}

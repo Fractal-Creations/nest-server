@@ -11,6 +11,7 @@ import { AnswersController } from './answers/answers.controller';
 import { AnswersService } from './answers/answers.service';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
+import { ComplexesModule } from '../complexes/complexes.module';
 
 @Module({
   controllers: [TestingSessionController, AnswersController],
@@ -23,6 +24,7 @@ import { UsersModule } from '../users/users.module';
       Answer,
     ]),
     UsersModule,
+    ComplexesModule,
   ],
   
 })

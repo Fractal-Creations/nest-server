@@ -24,7 +24,7 @@ async function start() {
 
     const config = new DocumentBuilder()
         .setTitle('REST API Системы Возрастного Тестирования')
-        .setVersion('0.5.0')
+        .setVersion('1.0.0')
         .addBearerAuth()
         .build()
 
