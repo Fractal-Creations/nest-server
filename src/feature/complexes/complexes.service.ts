@@ -13,6 +13,7 @@ import {
 import { ComplexDto } from './dto/complex.dto';
 import { PaginationComplexDto } from './dto/pagination-complex.dto';
 import { title } from 'process';
+import { AppConst } from 'src/core/app.const';
 
 @Injectable()
 export class ComplexesService {
@@ -24,8 +25,8 @@ export class ComplexesService {
     private paginationService: PaginationService
   ) { }
   async create(createComplexDto: CreateComplexDto) {
-    if (createComplexDto.indicators.length != 12){
-      throw new HttpException(`Количество индикаторов должно быть 12`, HttpStatus.BAD_REQUEST);
+    if (createComplexDto.indicators.length != AppConst.maxTestingIndicatorCount){
+      throw new HttpException(`Количество индикаторов должно быть ${AppConst.maxTestingIndicatorCount}`, HttpStatus.BAD_REQUEST);
     }
     this.logger.debug(`Start creating new complex ${ createComplexDto.title }`)
     const complex = await this.complexRepository.create(createComplexDto);

@@ -35,6 +35,7 @@ export class TestingSessionController {
     return this.testingService.create(createTestingDto);
   }
 
+  @ApiOperation({summary: 'Поиск сеансов тестирования'})
   @Get()
   async findAll(
     @Pagination({
@@ -48,18 +49,23 @@ export class TestingSessionController {
     return this.testingService.findAll(pagination);
   }
 
+  @ApiOperation({summary: 'Получить сеанс тестирования по UUID'})
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.testingService.findOne(id);
   }
 
+  /* @ApiOperation({summary: 'Обновить сеанс тестирования по UUID'})
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMonitoringDto: UpdateTestingDto) {
-    return this.testingService.update(+id, updateMonitoringDto);
+  update(@Param('id') id: string, @Body() updateMonitoringDto: UpdateTestingDto) : Promise<TestingSessionDto> {
+    return this.testingService.update(id, updateMonitoringDto);
+  } */
+
+  @ApiOperation({summary: 'Завершить сеанс тестирования по UUID'})
+  @Patch('/complete/:id')
+  complete(@Param('id') id: string) : Promise<boolean> {
+    return this.testingService.endTestingSession(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.testingService.remove(+id);
-  }
+
 }

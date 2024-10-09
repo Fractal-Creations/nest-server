@@ -12,6 +12,8 @@ import { PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
 import { PaginationTestingSessionDto } from './dto/pagination-testing-session.dto';
 import { Includeable, Op } from 'sequelize';
 import { UserUtils } from '../common/utils/user.util';
+import { AppConst } from 'src/core/app.const';
+import { TestingSessionStatus } from './testing-session.enum';
 
 @Injectable()
 export class TestingSessionService {
@@ -26,7 +28,7 @@ export class TestingSessionService {
 
   async create(createTestingSessionDto: CreateTestingSessionDto) {
     this.logger.debug(`Start creating new testing session`)
-    const complex = await this.complexRepository.findOne({ where: { id: createTestingSessionDto.complexId}, include: {all: true} } );
+    const complex = await this.complexRepository.findOne({ where: { id: createTestingSessionDto.complexId }, include: { all: true } });
     if (!complex) {
       this.logger.debug('Cant find complex');
       throw new HttpException(`Не удалось найти комплекс`, HttpStatus.BAD_REQUEST);
@@ -47,7 +49,7 @@ export class TestingSessionService {
       const testingSession = await this.testingRepository.create(createTestingSessionDto);
       if (testingSession) {
         this.logger.debug('Testing session successfully created');
-        return new TestingSessionDto(testingSession, complex, subject, [reserahcer]);
+        return new TestingSessionDto(testingSession, null, complex, subject, [reserahcer]);
       }
       else {
         this.logger.debug('Testing session not created');
@@ -56,6 +58,7 @@ export class TestingSessionService {
     }
 
   }
+
 
   async findAll(
     paginationOptions: PaginationQuery,
@@ -66,15 +69,14 @@ export class TestingSessionService {
     if (keySearch) {
       whereCondition = {
         [Op.or]: [
-          { title: { [Op.like]: `%${keySearch}%` } },
+          { title: { [Op.like]: `%${ keySearch }%` } },
         ],
       };
     }
-
     var response = (await this.paginationService.findAll<TestingSession>(
       {
         ...paginationOptions,
-        model: Complex,
+        model: TestingSession,
       },
       {
         where: whereCondition,
@@ -82,13 +84,12 @@ export class TestingSessionService {
 
       },
     ));
-
     return new PaginationTestingSessionDto(response);
   }
 
   async findOne(id: string) {
     this.logger.debug(`Start seraching testing session with id ${ id }`)
-    const testingSession = await this.testingRepository.findOne({ where: { id }, include: {all: true, nested: true} })
+    const testingSession = await this.testingRepository.findOne({ where: { id }, include: { all: true, nested: true } })
     if (testingSession) {
       this.logger.debug('Testing session successfully found');
       return new TestingSessionDto(testingSession);
@@ -98,11 +99,42 @@ export class TestingSessionService {
     }
   }
 
-  update(id: number, updateMonitoringDto: UpdateTestingDto) {
-    return `This action updates a #${ id } monitoring`;
+  async update(id: string, updateMonitoringDto: UpdateTestingDto) {
+    const testingSession = await this.testingRepository.findOne({ where: { id } });
+    if (testingSession) {
+      const updated = await testingSession.update(updateMonitoringDto);
+      return new TestingSessionDto(updated);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${ id } monitoring`;
+  async endTestingSession(id: string) {
+    const testingSession = await this.testingRepository.findOne({ where: { id } });
+    if (testingSession) {
+      if (testingSession.currentIndicatorNumber == AppConst.maxTestingIndicatorCount - 1) {
+        const completed = await this.update(id, { status: TestingSessionStatus.completed });
+        if (completed.status == TestingSessionStatus.completed) {
+          return true;
+        } else {
+          throw new HttpException(`Не удалось завершить сеанс тестирования`, HttpStatus.BAD_REQUEST);
+        }
+      } else {
+        throw new HttpException(`Необходимо завершить все индикаторы`, HttpStatus.BAD_REQUEST);
+      }
+    } else {
+      throw new HttpException(`Сеанс тестирования не существует`, HttpStatus.BAD_REQUEST);
+    }
+
+  }
+
+
+  async increaseIndicatorNumber(id: string) {
+    const testingSession = await this.testingRepository.findOne({ where: { id } });
+    if (testingSession) {
+      const currentIndicatorNumber = testingSession.currentIndicatorNumber
+      if (currentIndicatorNumber < AppConst.maxTestingIndicatorCount - 1) {
+        testingSession.currentIndicatorNumber += 1;
+        await testingSession.save();
+      }
+    }
   }
 }

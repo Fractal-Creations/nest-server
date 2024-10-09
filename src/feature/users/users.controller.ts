@@ -67,7 +67,7 @@ export class UsersController {
     //@UseGuards(JwtAuthGuard)
     @Get(':id')
     async getUserProfile( @Param('id') id?: string) : Promise<UserDto> {
-        return  this.userService.getUserById(id);
+        return  this.userService.findOne(id);
     }
 
     @ApiOperation({ summary: 'Присвоить роль пользователю' })

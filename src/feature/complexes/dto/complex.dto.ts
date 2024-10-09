@@ -19,6 +19,7 @@ readonly gender: GenderEnum;
 readonly indicators: Array<IndicatorDto>;
 
 constructor(model: Complex, indicators?: Indicator[]) {
+ 
     this.id = model.id;
     this.title = model.title;
     this.stage = model.stage;

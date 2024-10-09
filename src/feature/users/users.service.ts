@@ -83,7 +83,7 @@ export class UsersService {
         );
       }
 
-    async  getUserById(idUser: string) : Promise<UserDto>{
+    async  findOne(idUser: string) : Promise<UserDto>{
     
         const user = await this.userRepository.findByPk(idUser, {include: {all: true, nested: true}});
         this.logger.debug(user);

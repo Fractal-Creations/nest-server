@@ -4,6 +4,7 @@ import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model,
 import { Answer } from "src/feature/testing-session/answers/models/answers.model";
 import { Complex } from "src/feature/complexes/models/complex.model";
 import { User } from "src/feature/users/users.model";
+import { TestingSessionStatus } from "../testing-session.enum";
 
 
 interface TestingCreationAttrs {
@@ -21,6 +22,10 @@ export class TestingSession extends Model<TestingSession, TestingCreationAttrs> 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID' })
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true })
     readonly id: string;
+
+    @ApiProperty({example: TestingSessionStatus.started, description: 'Статус санса тестирования'})
+    @Column({type: DataType.ENUM, values: Object.values(TestingSessionStatus), allowNull: false, defaultValue: TestingSessionStatus.started})
+    status: TestingSessionStatus;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID закрепленног опросника' })
     @ForeignKey(() => Complex)

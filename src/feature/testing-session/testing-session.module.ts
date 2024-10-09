@@ -9,6 +9,8 @@ import { Complex } from '../complexes/models/complex.model';
 import { Answer } from './answers/models/answers.model';
 import { AnswersController } from './answers/answers.controller';
 import { AnswersService } from './answers/answers.service';
+import { UsersService } from '../users/users.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   controllers: [TestingSessionController, AnswersController],
@@ -20,6 +22,7 @@ import { AnswersService } from './answers/answers.service';
       Complex,
       Answer,
     ]),
+    UsersModule,
   ],
   
 })
