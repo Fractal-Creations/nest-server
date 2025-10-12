@@ -16,6 +16,12 @@ import { AppConst } from 'src/core/app.const';
 import { TestingSessionStatus } from './testing-session.enum';
 import { ComplexesService } from '../complexes/complexes.service';
 import { UsersService } from '../users/users.service';
+import { AgeUtils } from './utils/age_utls';
+import { PaginationAnswerDto } from './answers/dto/pagination-answer.dto';
+import { ComplexDto } from '../complexes/dto/complex.dto';
+import { PaginationComplexDto } from '../complexes/dto/pagination-complex.dto';
+import { PaginationDto } from '../common/pagination.dto';
+import { log } from 'console';
 
 @Injectable()
 export class TestingSessionService {
@@ -24,7 +30,7 @@ export class TestingSessionService {
     @InjectModel(TestingSession) private testingRepository: typeof TestingSession,
     @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(User) private userRepository: typeof User,
-    private userService: UsersService,
+    
     private complexesService: ComplexesService,
     private paginationService: PaginationService
   ) { }
@@ -63,6 +69,8 @@ export class TestingSessionService {
 
   }
 
+  
+
 
   async findAll(
     paginationOptions: PaginationQuery,
@@ -73,7 +81,7 @@ export class TestingSessionService {
     if (keySearch) {
       whereCondition = {
         [Op.or]: [
-          { title: { [Op.like]: `%${ keySearch }%` } },
+          { subjectName: { [Op.like]: `%${ keySearch }%` } },
         ],
       };
     }
@@ -95,7 +103,7 @@ export class TestingSessionService {
     this.logger.debug(`Start seraching testing session with id ${ id }`)
     /// FIXME: разобраться, как применить сортировку для вложенных моделей
     //const testingSession = await this.testingRepository.findOne({ where: { id },  include: [{model: User, as: 'subject'},  {model: Complex, as: 'complex', all: true, nested: true}] })
-    const testingSession = await this.testingRepository.findOne({ where: { id },  include: {all: true, nested: true} })
+    const testingSession = await this.testingRepository.findOne({ where: { id }, include: { all: true, nested: true } })
     if (testingSession) {
       const dto = new TestingSessionDto(testingSession);
       this.logger.debug('Testing session successfully found');

@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CitiesService } from './cities.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller('cities')
+@ApiExcludeController(true)
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 

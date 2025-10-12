@@ -18,6 +18,7 @@ import { RoleDto } from 'src/feature/roles/dto/role.dto';
 import { UUIDV4 } from 'sequelize';
 import { UserDto } from './dto/user.dto';
 import { Role } from 'src/feature/roles/roles.model';
+import { PaginationDto } from '../common/pagination.dto';
 //import { v4 as uuidv4 } from 'uuid';
 
 
@@ -52,21 +53,22 @@ export class UsersService {
     async findAll(
         paginationOptions: PaginationQuery,
         include: Includeable | Includeable[] = [],
-      ): Promise<PaginationResponse<User>> {
+      ): Promise<PaginationDto<UserDto>> {
         let whereCondition;
         const keySearch = paginationOptions?.searchKey;
         if (keySearch) {
           whereCondition = {
             [Op.or]: [
-              { surname: { [Op.like]: `%${keySearch}%` } },
-              { name: { [Op.like]: `%${keySearch}%` } },
-              { patronymic: { [Op.like]: `%${keySearch}%` } },
+              { surname: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('surname')), Op.like, `%${keySearch.toLowerCase()}%`) },
+              { name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), Op.like, `%${keySearch.toLowerCase()}%`) },
+              { patronymic: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('patronymic')), Op.like, `%${keySearch.toLowerCase()}%`) },
               { phone: { [Op.like]: `%${keySearch}%` } },
             ],
           };
         }
         
-        return this.paginationService.findAll(
+        
+        let response = await this.paginationService.findAll<User>(
           {
             ...paginationOptions,
             model: User,
@@ -75,12 +77,20 @@ export class UsersService {
           },
           {
             where: whereCondition,
-            include,
-          
+            include : Role,
+            order: [['surname', 'ASC'], ['name', 'ASC'], ['patronymic', 'ASC']],
           attributes: ['id', 'surname', 'name', 'patronymic', 'phone', 'email', 'gender', 'birthDate', 'nativeCity', 'isNative', 'currentCity'],
           
           },
         );
+
+        return new PaginationDto<UserDto>(
+          response.data,
+          response.total,
+          response.totalPages,
+          response.page,
+          response.limit
+        )
       }
 
     async  findOne(idUser: string) : Promise<UserDto>{
@@ -110,7 +120,13 @@ export class UsersService {
 
     async getUsersByPhone(phone: string){
         this.logger.debug(`Search user with phone ${phone}`)
-        const user = await this.userRepository.findOne({where: {phone: phone}, include: {all: true}});
+        const user = await this.userRepository.findOne({where: {phone: phone}, include: {all: true, nested: true}});
+        return user;
+    }
+
+     async getUsersByEmail(email: string){
+        this.logger.debug(`Search user with phone ${email}`)
+        const user = await this.userRepository.findOne({where: {phone: email}, include: {all: true, nested: true}});
         return user;
     }
 

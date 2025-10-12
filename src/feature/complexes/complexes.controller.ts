@@ -14,6 +14,7 @@ import { ComplexDto } from './dto/complex.dto';
 import { PaginationComplexDto } from './dto/pagination-complex.dto';
 import { GenderEnum } from 'src/feature/users/users.const';
 import { ComplexStage } from './complexes.const';
+import { PaginationDto } from '../common/pagination.dto';
 
 @ApiTags('Комплексы')
 @Controller('complexes')
@@ -57,6 +58,21 @@ export class SurveysController {
     return this.surveysService.findOne(id);
   }
 
+  @ApiOperation({summary: 'Поиск подходящих комплексов для испытуемого'})
+  @Get('suitable-complexes')
+  async findSuitableComplexes(
+    @Query('subjectId') subjectId: string,
+    @Pagination({
+      limit: 10,
+      page: 0,
+      orderBy: 'createdAt',
+      orderDirection: 'DESC',
+    })
+    pagination: PaginationQuery,
+  ) : Promise<PaginationDto<ComplexDto>> {
+    return this.surveysService.findSuitableComplexes(pagination, subjectId);
+  }
+
   @ApiOperation({summary: 'Обновить комплекс по id'})
   @ApiResponse({status: 200, type: Complex})
   @Patch(':id')
@@ -75,6 +91,7 @@ export class SurveysController {
     @ApiResponse({ status: 200 })
     @Post('/indicators')
     addRole(@Param('id') id: string, @Body() dto: AddIndicatorDto) {
-        return this.surveysService.addInidicators(dto.indicators);
+      
+        return this.surveysService.addInidicators(id, dto);
     }
 }

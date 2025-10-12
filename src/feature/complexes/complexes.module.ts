@@ -6,6 +6,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { SurveysController as ComplexesController } from './complexes.controller';
 import { Indicator } from 'src/feature/indicators/models/indicator.model';
 import { IndicatorsModule } from 'src/feature/indicators/indicators.module';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/users.model';
 
 @Module({
   controllers: [ComplexesController],
@@ -15,7 +18,9 @@ import { IndicatorsModule } from 'src/feature/indicators/indicators.module';
       Complex,
       ComplexIndicators,
       Indicator,
+      User,
     ]),
+    UsersModule,
   ],
   exports: [ComplexesService],
 })

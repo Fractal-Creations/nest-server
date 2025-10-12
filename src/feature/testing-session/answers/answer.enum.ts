@@ -1,5 +1,6 @@
 export enum GradeValue {
     bronze = 'bronze',
     silver = 'silver',
-    gold = 'gold'
+    gold = 'gold',
+    none = 'none'
 }

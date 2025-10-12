@@ -12,8 +12,12 @@ import {
 } from '@ntheanh201/nestjs-sequelize-pagination';
 import { ComplexDto } from './dto/complex.dto';
 import { PaginationComplexDto } from './dto/pagination-complex.dto';
-import { title } from 'process';
 import { AppConst } from 'src/core/app.const';
+import { AddIndicatorDto } from './dto/add-indicator.dto';
+import { PaginationDto } from '../common/pagination.dto';
+import { AgeUtils } from '../testing-session/utils/age_utls';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/users.model';
 
 @Injectable()
 export class ComplexesService {
@@ -22,27 +26,28 @@ export class ComplexesService {
   constructor(
     @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(Indicator) private healthIndicatorRepository: typeof Indicator,
+    @InjectModel(User) private userRepository: typeof User,
     private paginationService: PaginationService
   ) { }
   async create(createComplexDto: CreateComplexDto) {
-    if (createComplexDto.indicators.length != AppConst.maxTestingIndicatorCount){
-      throw new HttpException(`Количество индикаторов должно быть ${AppConst.maxTestingIndicatorCount}`, HttpStatus.BAD_REQUEST);
+    if (createComplexDto.indicators.length != AppConst.maxTestingIndicatorCount) {
+      throw new HttpException(`Количество индикаторов должно быть ${ AppConst.maxTestingIndicatorCount }`, HttpStatus.BAD_REQUEST);
     }
     this.logger.debug(`Start creating new complex ${ createComplexDto.title }`)
     const complex = await this.complexRepository.create(createComplexDto);
     var indicators = Array<Indicator>();
-    if (complex){
-        this.logger.debug(`Found ${createComplexDto.indicators.length} indicators`)
-        for (var i =0; i < createComplexDto.indicators.length; i++){
-          var id = createComplexDto.indicators.at(i);
-          this.logger.debug(`Lets find indicator with id ${id}`)
-          var indicator = await this.healthIndicatorRepository.findOne({where: {id}});
-          if (indicator){
-            indicators.push(indicator);
-            this.logger.debug(`Added ${indicator.title} indicator`)
-          }
+    if (complex) {
+      this.logger.debug(`Found ${ createComplexDto.indicators.length } indicators`)
+      for (var i = 0; i < createComplexDto.indicators.length; i++) {
+        var id = createComplexDto.indicators.at(i);
+        this.logger.debug(`Lets find indicator with id ${ id }`)
+        var indicator = await this.healthIndicatorRepository.findOne({ where: { id } });
+        if (indicator) {
+          indicators.push(indicator);
+          this.logger.debug(`Added ${ indicator.title } indicator`)
         }
-        await complex.$set('indicators', indicators)
+      }
+      await complex.$set('indicators', indicators)
       this.logger.debug('Complex are created');
       return new ComplexDto(complex, indicators);
     } else {
@@ -60,7 +65,7 @@ export class ComplexesService {
     if (keySearch) {
       whereCondition = {
         [Op.or]: [
-          { title: { [Op.like]: `%${keySearch}%` } },
+          { title: { [Op.like]: `%${ keySearch }%` } },
         ],
       };
     }
@@ -81,7 +86,7 @@ export class ComplexesService {
 
   async findOne(id: string) {
     this.logger.debug(`Start seraching complex with id ${ id }`)
-    const complex = await  this.complexRepository.findOne({ where: { id }, include: {all: true, nested: true} })
+    const complex = await this.complexRepository.findOne({ where: { id }, include: { all: true, nested: true } })
     if (complex) {
       this.logger.debug('Complex successfully found');
       return new ComplexDto(complex);
@@ -92,15 +97,74 @@ export class ComplexesService {
 
   }
 
+  async findSuitableComplexes(pagination: PaginationQuery,subjectId: string): Promise<PaginationDto<ComplexDto>> {
+      this.logger.debug(`Start creating new testing session`)
+      const subject = await this.userRepository.findOne({ where: { id: subjectId } });
+      if (!subject) {
+        this.logger.debug('Cant find subject');
+        throw new HttpException(`Не удалось найти испытуемого`, HttpStatus.BAD_REQUEST);
+      }
+  
+      let subjectStage = AgeUtils.calculateStageFromBirthDate(subject.birthDate);
+      this.logger.debug(`Subject stage ${subjectStage}`);
+      if (!subjectStage || subjectStage == 0) {
+        this.logger.debug('Cant find subject stage');
+        throw new HttpException(`Не удалось определить возрастную группу испытуемого`, HttpStatus.BAD_REQUEST);
+      }
+  
+      const complexesPagination = await this.paginationService.findAll<Complex>(
+        {
+        limit: pagination.limit ?? 20,
+        page: pagination.page ?? 0,
+        orderBy: pagination.orderBy ??  'title',
+        orderDirection: pagination.orderDirection ?? 'DESC',
+        searchKey: subjectStage.toString(),
+        model: Complex,
+      },
+        {
+          where: {
+            stage: { [Op.eq]: subjectStage },
+            gender: { [Op.eq]: subject.gender },
+          },
+        });
+      if (!complexesPagination) {
+        this.logger.debug('Cant find complex');
+        throw new HttpException(`Не удалось найти комплекс`, HttpStatus.BAD_REQUEST);
+      }
+  
+      return new PaginationDto<ComplexDto>(
+        complexesPagination.data.map((dto) => new ComplexDto(dto)),
+        complexesPagination.total,
+        complexesPagination.totalPages,
+        complexesPagination.page,
+        complexesPagination.limit
+      );
+  
+    }
+
   update(id: string, updateSurveyDto: UpdateSurveyDto) {
-    return `This action updates a #${id} survey`;
+    return `This action updates a #${ id } survey`;
   }
 
   remove(id: string) {
-    return `This action removes a #${id} survey`;
+    return `This action removes a #${ id } survey`;
   }
 
-  addInidicators(indicators: string[]){
-    
+  async addInidicators(id: string, dto: AddIndicatorDto) {
+    this.logger.debug(`Start seraching complex with id ${ id }`)
+    let complex = await this.complexRepository.findOne({ where: { id } });
+    if (complex) {
+      this.logger.debug('Complex successfully found, lets add indicators {}', dto.indicators);
+      let indicators = await this.healthIndicatorRepository.findAll({ where: { id: {[Op.in]: dto.indicators}} });
+      if (indicators) {
+        this.logger.debug(`Found ${ indicators.length } indicators`);
+        complex.$set('indicators', indicators);
+        this.logger.debug('Indicators are added');
+      }
+      
+      return complex;
+    } else {
+      throw new HttpException(`Комплекс не существует`, HttpStatus.BAD_REQUEST);
+    }
   }
 }

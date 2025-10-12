@@ -10,7 +10,7 @@ import {
   PaginationResponse,
   PaginationService,
 } from '@ntheanh201/nestjs-sequelize-pagination';
-import { Includeable, Op } from 'sequelize';
+import { Includeable, Op, Sequelize } from 'sequelize';
 import { IndicatorDto } from './dto/indicator.dto';
 import { PaginationIndicatorDto } from './dto/pagination-indicator.dto';
 import { Complex } from '../complexes/models/complex.model';
@@ -29,7 +29,7 @@ export class IndicatorsService {
 
   async findOne(id: String) {
     this.logger.debug(`Start seraching health indicator with id ${ id }`)
-    const indicator = await this.healthIndicatorRepository.findOne({ where: { id }, include: {all: true} })
+    const indicator = await this.healthIndicatorRepository.findOne({ where: { id }, include: { all: true } })
     if (indicator) {
       this.logger.debug('Indicator successfully found');
       return new IndicatorDto(indicator);
@@ -48,7 +48,7 @@ export class IndicatorsService {
     this.logger.debug(`Start deleting health indicator with id ${ id }`)
     const rowId = await this.healthIndicatorRepository.destroy({ where: { id } })
     if (rowId) {
-      this.logger.debug(`Indicator with rowId ${rowId} successfully deleted`);
+      this.logger.debug(`Indicator with rowId ${ rowId } successfully deleted`);
       return rowId;
     } else {
       this.logger.debug('Indicator not exists');
@@ -62,31 +62,31 @@ export class IndicatorsService {
 
     const indicator = await this.healthIndicatorRepository.create(dto);
     var metrics = Array<Metric>();
-     let  boundaryMetric: Metric | null;
+    let boundaryMetric: Metric | null;
     if (indicator) {
-      if (dto.metricsIdList && dto.metricsIdList.length != 0){
-        this.logger.debug(`Found ${dto.metricsIdList.length} measures`)
+      if (dto.metricsIdList?.length) {
+        this.logger.debug(`Found ${ dto.metricsIdList.length } measures`)
         var metrics = Array<Metric>();
-        for (var i =0; i < dto.metricsIdList.length; i++){
-            var id =  dto.metricsIdList.at(i);
-            this.logger.debug(`Lets find measure with id ${id} metrics`)
-            var metric = await this.metricRepository.findOne({where: { id }})
-            if (metric != null){
-              metrics.push(metric);
-                this.logger.debug(`Add ${metric.name} metric`)
-            }
+        for (var i = 0; i < dto.metricsIdList.length; i++) {
+          var id = dto.metricsIdList.at(i);
+          this.logger.debug(`Lets find measure with id ${ id } metrics`)
+          var metric = await this.metricRepository.findOne({ where: { id } })
+          if (metric != null) {
+            metrics.push(metric);
+            this.logger.debug(`Add ${ metric.name } metric`)
+          }
         }
 
         await indicator.$set('metrics', metrics);
 
-        
-    } 
-    if (dto.boundaryMetricId){
 
-      var id = dto.boundaryMetricId
-      boundaryMetric = await this.metricRepository.findOne({where: { id }})
-    }
-        return new IndicatorDto(indicator, metrics.length > 0 ? metrics : null, boundaryMetric);
+      }
+      if (dto.boundaryMetricId) {
+
+        var id = dto.boundaryMetricId
+        boundaryMetric = await this.metricRepository.findOne({ where: { id } })
+      }
+      return new IndicatorDto(indicator, metrics.length > 0 ? metrics : null, boundaryMetric);
     } else {
       this.logger.debug('Indicator not created');
       throw new HttpException(`Не удалось создать показатель`, HttpStatus.BAD_REQUEST);
@@ -103,34 +103,26 @@ export class IndicatorsService {
     const keySearch = paginationOptions?.searchKey;
     if (keySearch) {
       whereCondition = {
-        [Op.or]: [
-          { sku: { [Op.like]: `%${keySearch}%` } },
-          { barcode: { [Op.like]: `%${keySearch}%` } },
-          { name: { [Op.like]: `%${keySearch}%` } },
+        [Op.and]: [
+          Sequelize.where(
+            Sequelize.fn('LOWER', Sequelize.col('"Indicator".title')),
+            Op.like,
+            `%${ keySearch.toLowerCase() }%`
+          ),
         ],
       };
     }
-    var response =   (await this.paginationService.findAll<Indicator>(
+    var response = (await this.paginationService.findAll<Indicator>(
       {
         ...paginationOptions,
         model: Indicator,
-
       },
       {
-        
         where: whereCondition,
-        include : { all: true, nested: true },
-
+        include: { all: true, nested: true },
+        order: [['title', 'ASC']],
       },
     ));
     return new PaginationIndicatorDto(response);
-
-  /*   const indicators = await this.healthIndicatorRepository.findAll({ include: { all: true } });
-    if (indicators) {
-      return indicators;
-    } else {
-      throw new HttpException(`Таблица не найдена или повреждена `, HttpStatus.INTERNAL_SERVER_ERROR);
-    } */
-
   }
 }

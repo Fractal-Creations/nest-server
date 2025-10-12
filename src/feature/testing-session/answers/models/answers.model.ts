@@ -20,7 +20,7 @@ export class Answer extends Model<Answer, AnswerCreationAttrs>{
     @Column({type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true})
     readonly id: String;
 
-    @ApiProperty({example: GradeValue.gold, description: 'Оценка: Золото (3)/ Серебро (2)/ Бронза (1)'})
+    @ApiProperty({example: GradeValue.gold, description: 'Оценка: Золото (3)/ Серебро (2)/ Бронза (1)/ Не сдано (0)'})
     @Column({type: DataType.ENUM, values: Object.values(GradeValue)})
     grade: GradeValue;
 

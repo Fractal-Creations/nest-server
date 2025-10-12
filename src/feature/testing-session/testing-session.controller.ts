@@ -6,6 +6,8 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TestingSessionDto } from './dto/testing-session.dto';
 import { AnswersService } from './answers/answers.service';
 import { Pagination, PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
+import { PaginationDto } from '../common/pagination.dto';
+import { ComplexDto } from '../complexes/dto/complex.dto';
 
 
 @ApiTags('Сеансы тестирования')
@@ -48,6 +50,7 @@ export class TestingSessionController {
   ) {
     return this.testingService.findAll(pagination);
   }
+
 
   @ApiOperation({summary: 'Получить сеанс тестирования по UUID'})
   @Get(':id')
