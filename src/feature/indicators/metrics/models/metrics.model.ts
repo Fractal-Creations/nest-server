@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {  Exclude, instanceToPlain } from "class-transformer";
 import { BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import { IndicatorMetrics } from "src/feature/indicators/models/indicator-metrics.model";
-import { Indicator } from "src/feature/indicators/models/indicator.model";
+import { BaseIndicator } from "../../models/base-indicator.model";
+import { BaseIndicatorMetrics } from "../../models/base_indicator-metrics.model";
 
 interface CreateMeasureMetricAttrs{
     name: string;
@@ -30,11 +30,11 @@ export class Metric extends Model<Metric, CreateMeasureMetricAttrs>{
     comment?: string;
 
     @Exclude({toPlainOnly: true})
-    @HasMany(() => Indicator)
-     readonly boundaryIndicators?: Array<Indicator & {MeasureInfoMetrics: IndicatorMetrics}>;
+    @HasMany(() => BaseIndicatorMetrics)
+    readonly boundaryIndicators?: Array<BaseIndicator & {MeasureInfoMetrics: BaseIndicatorMetrics}>;
 
     @Exclude({toPlainOnly: true})
-    @BelongsToMany(() => Indicator, () => IndicatorMetrics)
-    readonly indicators?: Array<Indicator & {MeasureInfoMetrics: IndicatorMetrics}>;
+    @BelongsToMany(() => BaseIndicator, () => BaseIndicatorMetrics)
+    readonly indicators?: Array<BaseIndicator & {MeasureInfoMetrics: BaseIndicatorMetrics}>;
 
 }

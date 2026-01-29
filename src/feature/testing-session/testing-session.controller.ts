@@ -8,6 +8,7 @@ import { AnswersService } from './answers/answers.service';
 import { Pagination, PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
 import { PaginationDto } from '../common/pagination.dto';
 import { ComplexDto } from '../complexes/dto/complex.dto';
+import { TestingSessionStatus } from './testing-session.enum';
 
 
 @ApiTags('Сеансы тестирования')
@@ -38,8 +39,10 @@ export class TestingSessionController {
   }
 
   @ApiOperation({summary: 'Поиск сеансов тестирования'})
+  @ApiQuery({ name: 'status', enum: TestingSessionStatus, description: 'Статус', required: false })
   @Get()
   async findAll(
+    @Query('status') status: TestingSessionStatus,
     @Pagination({
       limit: 10,
       page: 0,
@@ -48,7 +51,13 @@ export class TestingSessionController {
     })
     pagination: PaginationQuery,
   ) {
-    return this.testingService.findAll(pagination);
+    return this.testingService.findAll(pagination, null, status);
+  }
+
+    @ApiOperation({summary: 'Подключиться к тестированию'})
+  @Get('/connect')
+  connectResearcherToSession(@Query('sessionId') sessionId: string, @Query('researcherId') researcherId: string) {
+    return this.testingService.connectToSession(sessionId, researcherId);
   }
 
 
@@ -58,6 +67,8 @@ export class TestingSessionController {
     return this.testingService.findOne(id);
   }
 
+ 
+
   /* @ApiOperation({summary: 'Обновить сеанс тестирования по UUID'})
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMonitoringDto: UpdateTestingDto) : Promise<TestingSessionDto> {
@@ -66,7 +77,7 @@ export class TestingSessionController {
 
   @ApiOperation({summary: 'Завершить сеанс тестирования по UUID'})
   @Patch('/complete/:id')
-  complete(@Param('id') id: string) : Promise<boolean> {
+  complete(@Param('id') id: string)  {
     return this.testingService.endTestingSession(id);
   }
 

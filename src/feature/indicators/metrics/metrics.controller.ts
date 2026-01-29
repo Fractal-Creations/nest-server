@@ -3,7 +3,7 @@ import { MetricsService } from './metrics.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateMeasureMetricDto } from './dto/create-measure-metric.dto';
 import { Metric } from './models/metrics.model';
-import { UpdateIndicatorDto } from '../dto/update-indicator.dto';
+import { UpdateStagedIndicatorDto } from '../dto/update-staged-indicator.dto';
 import { MetricDto } from './dto/metric.dto';
 import {
   PaginationQuery,
@@ -49,7 +49,7 @@ export class MeasureMetricsController {
     
     @ApiOperation({ summary: 'Обновить метрику измерения по id' })
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateIndicatorDto) {
+    update(@Param('id') id: string, @Body() updateHealthIndicatorDto: UpdateStagedIndicatorDto) {
       return this.measuresService.update(id, updateHealthIndicatorDto);
     }
     

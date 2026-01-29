@@ -1,14 +1,12 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ComplexesService as ComplexesService } from './complexes.service';
 import { Complex } from './models/complex.model';
-import { ComplexIndicators } from './models/complex-indicators.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SurveysController as ComplexesController } from './complexes.controller';
-import { Indicator } from 'src/feature/indicators/models/indicator.model';
-import { IndicatorsModule } from 'src/feature/indicators/indicators.module';
 import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
 import { User } from '../users/users.model';
+import { ComplexStagedIndicators } from './models/complex-staged_indicators.model';
+import { StagedIndicator } from '../indicators/models/staged-indicator.model';
 
 @Module({
   controllers: [ComplexesController],
@@ -16,8 +14,8 @@ import { User } from '../users/users.model';
   imports: [
     SequelizeModule.forFeature([
       Complex,
-      ComplexIndicators,
-      Indicator,
+      ComplexStagedIndicators,
+      StagedIndicator,
       User,
     ]),
     UsersModule,

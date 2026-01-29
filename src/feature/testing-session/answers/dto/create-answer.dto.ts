@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { GradeValue } from "../answer.enum";
-import { IsEnum, IsString, IsUUID } from "class-validator";
+import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateAnswerDto {
     
@@ -24,8 +24,9 @@ export class CreateAnswerDto {
     @IsUUID()
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID исследователя' })
     readonly researcherId: string 
-
+    
     @IsString()
-    @ApiProperty({example: 'Комментарий', description: 'Комментарий'})
+    @IsOptional()
+    @ApiProperty({example: 'Комментарий', description: 'Комментарий', required: false})
     readonly comment?: string;
 }

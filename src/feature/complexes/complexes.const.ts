@@ -10,5 +10,5 @@ export enum ComplexStage {
     nine ="9",
     ten = "10",
     eleven = "11",
-    twelwe = "12",
+    twelwe = "12"
 }

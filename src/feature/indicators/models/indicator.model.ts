@@ -1,4 +1,4 @@
-import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
+/* import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { IndicatorMetrics } from "./indicator-metrics.model";
 import { IsOptional } from "class-validator";
@@ -37,7 +37,7 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
 
     @ApiProperty({example: ComplexStage.one, description: 'Ступень'})
     @Column({type: DataType.ENUM, values: Object.values(ComplexStage), allowNull: false})
-    stage: ComplexStage;
+     stage: ComplexStage;
 
     @ApiProperty({example: GenderEnum.MALE, description: 'Пол'})
     @Column({type: DataType.ENUM, values: Object.values(GenderEnum), allowNull: false})
@@ -48,7 +48,7 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
     indicatorMandatory: IndicatorMandatory;
 
     @ApiProperty({example: IndicatorType.gymnastic, description: 'Тип теста'})
-    @Column({type: 'gender_enum', values: Object.values(IndicatorType), allowNull: false})
+    @Column({type: DataType.ENUM, values: Object.values(IndicatorType), allowNull: false})
     characteristicType: IndicatorType;
 
     @ApiProperty({example: 10, description: 'Показания для золотой медали'})
@@ -96,4 +96,4 @@ export class Indicator extends Model<Indicator, HealthIndicatorCreationAttrs>{
     @ApiHideProperty()  
     @BelongsToMany(() => Complex, () => ComplexIndicators)
     complexes?: Array<Complex & {ComplexHealthIndicators: ComplexIndicators}>;
-}
+} */

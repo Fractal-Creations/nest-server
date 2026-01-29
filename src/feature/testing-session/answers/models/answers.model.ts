@@ -3,7 +3,7 @@ import { Table,  Model, Column, DataType, HasMany, ForeignKey, BelongsTo } from 
 import { TestingSession } from "src/feature/testing-session/models/testing-session.model";
 import { User } from "src/feature/users/users.model";
 import { GradeValue } from "../answer.enum";
-import { Indicator } from "src/feature/indicators/models/indicator.model";
+import { StagedIndicator } from "src/feature/indicators/models/staged-indicator.model";
 
 interface AnswerCreationAttrs {
     grade: GradeValue;
@@ -25,7 +25,7 @@ export class Answer extends Model<Answer, AnswerCreationAttrs>{
     grade: GradeValue;
 
     @ApiProperty({ example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'UUID сеанса тестирования' })
-    @ForeignKey(() => Indicator)
+    @ForeignKey(() => StagedIndicator)
     @Column({type: DataType.UUID, allowNull: false})
     readonly indicatorId: string;
 

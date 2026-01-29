@@ -2,7 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateAnswerDto } from './create-answer.dto';
 import { GradeValue } from '../answer.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateAnswerDto  {
 
@@ -15,6 +15,7 @@ export class UpdateAnswerDto  {
     readonly researcherId: string 
 
     @IsString()
-    @ApiProperty({example: 'Комментарий', description: 'Комментарий'})
+    @IsOptional()
+    @ApiProperty({example: 'Комментарий', description: 'Комментарий', required: false})
     readonly comment?: string;
 }

@@ -9,8 +9,7 @@ import { Complex } from '../complexes/models/complex.model';
 import { User } from '../users/users.model';
 import { TestingSessionDto } from './dto/testing-session.dto';
 import { PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
-import { PaginationTestingSessionDto } from './dto/pagination-testing-session.dto';
-import { Includeable, Op } from 'sequelize';
+import { Includeable, Op, Sequelize } from 'sequelize';
 import { UserUtils } from '../common/utils/user.util';
 import { AppConst } from 'src/core/app.const';
 import { TestingSessionStatus } from './testing-session.enum';
@@ -21,7 +20,12 @@ import { PaginationAnswerDto } from './answers/dto/pagination-answer.dto';
 import { ComplexDto } from '../complexes/dto/complex.dto';
 import { PaginationComplexDto } from '../complexes/dto/pagination-complex.dto';
 import { PaginationDto } from '../common/pagination.dto';
-import { log } from 'console';
+import { Console, log } from 'console';
+import { StagedIndicator } from '../indicators/models/staged-indicator.model';
+import { BaseIndicator } from '../indicators/models/base-indicator.model';
+import { Metric } from '../indicators/metrics/models/metrics.model';
+import { Role } from '../roles/roles.model';
+import { Answer } from './answers/models/answers.model';
 
 @Injectable()
 export class TestingSessionService {
@@ -30,7 +34,7 @@ export class TestingSessionService {
     @InjectModel(TestingSession) private testingRepository: typeof TestingSession,
     @InjectModel(Complex) private complexRepository: typeof Complex,
     @InjectModel(User) private userRepository: typeof User,
-    
+
     private complexesService: ComplexesService,
     private paginationService: PaginationService
   ) { }
@@ -38,7 +42,7 @@ export class TestingSessionService {
 
   async create(createTestingSessionDto: CreateTestingSessionDto) {
     this.logger.debug(`Start creating new testing session`)
-    const complex = await this.complexRepository.findOne({ where: { id: createTestingSessionDto.complexId }, include: { all: true } });
+    const complex = await this.complexesService.findOne(createTestingSessionDto.complexId);
     if (!complex) {
       this.logger.debug('Cant find complex');
       throw new HttpException(`Не удалось найти комплекс`, HttpStatus.BAD_REQUEST);
@@ -66,25 +70,42 @@ export class TestingSessionService {
         throw new HttpException(`Не удалось создать сеанс тестирования`, HttpStatus.BAD_REQUEST);
       }
     }
-
   }
 
-  
+
 
 
   async findAll(
     paginationOptions: PaginationQuery,
     include: Includeable | Includeable[] = [],
-  ): Promise<PaginationTestingSessionDto> {
-    let whereCondition;
+    status: TestingSessionStatus | null,
+  ): Promise<PaginationDto<TestingSessionDto>> {
+
     const keySearch = paginationOptions?.searchKey;
-    if (keySearch) {
-      whereCondition = {
+
+    // Базовые условия
+    const whereCondition: any = { [Op.and]: [] };
+
+    // Поиск по title в base-indicators
+    if (paginationOptions?.searchKey) {
+      whereCondition[Op.and].push({
         [Op.or]: [
+          
           { subjectName: { [Op.like]: `%${ keySearch }%` } },
-        ],
-      };
+          { '$complex.title$': { [Op.iLike]: `%${ keySearch }%` } },
+        ]
+      });
     }
+
+    // Поиск по title в base-indicators
+    if (status) {
+      whereCondition[Op.and].push({ status: { [Op.eq]: status } });
+    }
+
+
+
+   
+
     var response = (await this.paginationService.findAll<TestingSession>(
       {
         ...paginationOptions,
@@ -92,18 +113,29 @@ export class TestingSessionService {
       },
       {
         where: whereCondition,
-        include,
+        include: [
+          {
+            model: Complex,
+            as: 'complex',
+            attributes: ['title'],
+          }
+        ],
 
       },
     ));
-    return new PaginationTestingSessionDto(response);
+
+    return new PaginationDto<TestingSessionDto>(
+      response.data.map((dto) => new TestingSessionDto(dto)),
+      response.total,
+      response.totalPages,
+      response.page,
+      response.limit
+    );
   }
 
   async findOne(id: string) {
     this.logger.debug(`Start seraching testing session with id ${ id }`)
-    /// FIXME: разобраться, как применить сортировку для вложенных моделей
-    //const testingSession = await this.testingRepository.findOne({ where: { id },  include: [{model: User, as: 'subject'},  {model: Complex, as: 'complex', all: true, nested: true}] })
-    const testingSession = await this.testingRepository.findOne({ where: { id }, include: { all: true, nested: true } })
+    const testingSession = await this._getTestingSession(id)
     if (testingSession) {
       const dto = new TestingSessionDto(testingSession);
       this.logger.debug('Testing session successfully found');
@@ -116,6 +148,60 @@ export class TestingSessionService {
     }
   }
 
+  private async _getTestingSession(id: string) {
+    return await this.testingRepository.findOne({
+      where: { id }, include: [
+        {
+          model: Complex,
+          include: [
+            {
+              model: StagedIndicator,
+              include: [
+                {
+                  model: BaseIndicator,
+                  include: [
+                    {
+                      model: Metric,
+                      as: 'metrics',
+                      through: { attributes: [] },
+                    },
+                    {
+                      model: Metric,
+                      as: 'boundaryMetric',
+                    },
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: User,
+          include: [
+            { model: Role, }
+          ]
+        },
+        {
+          model: Answer,
+          as: 'answers',
+        }
+      ]
+    });
+  }
+
+  async connectToSession(sessionId: string, researcherId: string) {
+    const testingSession = await this._getTestingSession(sessionId);
+    const researcher = await this.userRepository.findOne({ where: { id: researcherId } });
+    if (testingSession && researcher) {
+      var isResearcherParticipate = testingSession.researchersIds.includes(researcherId);
+      if (isResearcherParticipate) {
+        return new TestingSessionDto(testingSession);
+      }
+      const updated = await testingSession.update({ researchersIds: [...testingSession.researchersIds, researcherId] });
+      return new TestingSessionDto(updated);
+    }
+  }
+
   async update(id: string, updateMonitoringDto: UpdateTestingDto) {
     const testingSession = await this.testingRepository.findOne({ where: { id } });
     if (testingSession) {
@@ -125,19 +211,31 @@ export class TestingSessionService {
   }
 
   async endTestingSession(id: string) {
-    const testingSession = await this.testingRepository.findOne({ where: { id } });
+    const testingSession = await this.findOne(id);
     if (testingSession) {
-      if (testingSession.currentIndicatorNumber == AppConst.maxTestingIndicatorCount - 1) {
+      var currentIndicatorNumber = testingSession.currentIndicatorNumber
+      var indicatorsLength = testingSession.complex.indicators?.length
+      var isAllIndicatorsCompleted = currentIndicatorNumber == indicatorsLength;
+      this.logger.debug(`Current Indicator: ${ currentIndicatorNumber }, Total Indicators: ${ indicatorsLength }`);
+      if (isAllIndicatorsCompleted) {
+
         const completed = await this.update(id, { status: TestingSessionStatus.completed });
         if (completed.status == TestingSessionStatus.completed) {
-          return true;
+          this.logger.debug('Testing session complete error');
+          return {
+            completed: true,
+            message: 'Сеанс тестирования завершен'
+          };
         } else {
+          this.logger.debug('Testing session complete error');
           throw new HttpException(`Не удалось завершить сеанс тестирования`, HttpStatus.BAD_REQUEST);
         }
       } else {
+        this.logger.debug('Testing session NOT completed');
         throw new HttpException(`Необходимо завершить все индикаторы`, HttpStatus.BAD_REQUEST);
       }
     } else {
+      this.logger.debug('Testing session NOT found');
       throw new HttpException(`Сеанс тестирования не существует`, HttpStatus.BAD_REQUEST);
     }
 

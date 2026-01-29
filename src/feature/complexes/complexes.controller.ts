@@ -21,11 +21,26 @@ import { PaginationDto } from '../common/pagination.dto';
 export class SurveysController {
   constructor(private readonly surveysService: ComplexesService) {}
 
-  @ApiOperation({summary: 'Добавление комплекса'})
+  @ApiOperation({summary: 'Добавление комплекса из 12 показателей'})
   @ApiResponse({status: 201, type: ComplexDto})
   @ApiQuery({ name: 'gender', enum: GenderEnum})
   @ApiQuery({ name: 'stage', enum: ComplexStage})
-  @Post()
+  @Post('ranged')
+  async createRanged(
+    @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
+    @Query('stage') stage: ComplexStage = ComplexStage.one,
+    @Body() createSurveyDto: CreateSurveyDto
+  ) : Promise<ComplexDto> {
+    createSurveyDto.gender = gender;
+    createSurveyDto.stage = stage;
+    return this.surveysService.createRanged(createSurveyDto);
+  }
+
+   @ApiOperation({summary: 'Добавление комплекса c свободным количеством показателей'})
+  @ApiResponse({status: 201, type: ComplexDto})
+  @ApiQuery({ name: 'gender', enum: GenderEnum})
+  @ApiQuery({ name: 'stage', enum: ComplexStage})
+  @Post('free')
   async create(
     @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
     @Query('stage') stage: ComplexStage = ComplexStage.one,
@@ -33,7 +48,7 @@ export class SurveysController {
   ) : Promise<ComplexDto> {
     createSurveyDto.gender = gender;
     createSurveyDto.stage = stage;
-    return this.surveysService.create(createSurveyDto);
+    return this.surveysService.createFree(createSurveyDto);
   }
 
   @ApiOperation({summary: 'Получить все комплексы'})
@@ -51,14 +66,7 @@ export class SurveysController {
     return this.surveysService.findAll(pagination);
   }
 
-  @ApiOperation({summary: 'Получить комплекс по id'})
-  @ApiResponse({status: 200, type: Complex})
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.surveysService.findOne(id);
-  }
-
-  @ApiOperation({summary: 'Поиск подходящих комплексов для испытуемого'})
+   @ApiOperation({summary: 'Поиск подходящих комплексов для испытуемого'})
   @Get('suitable-complexes')
   async findSuitableComplexes(
     @Query('subjectId') subjectId: string,
@@ -72,6 +80,15 @@ export class SurveysController {
   ) : Promise<PaginationDto<ComplexDto>> {
     return this.surveysService.findSuitableComplexes(pagination, subjectId);
   }
+
+  @ApiOperation({summary: 'Получить комплекс по id'})
+  @ApiResponse({status: 200, type: Complex})
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.surveysService.findOne(id);
+  }
+
+
 
   @ApiOperation({summary: 'Обновить комплекс по id'})
   @ApiResponse({status: 200, type: Complex})

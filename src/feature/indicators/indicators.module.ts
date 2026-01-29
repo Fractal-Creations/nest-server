@@ -2,14 +2,13 @@ import { Module } from '@nestjs/common';
 import { IndicatorsService } from './indicators.service';
 import { IndicatorsController } from './indicators.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Indicator } from './models/indicator.model';
-import { IndicatorMetrics } from './models/indicator-metrics.model';
 import { MeasureMetricsController as MetricsController } from './metrics/metrics.controller';
 import { MetricsService } from './metrics/metrics.service';
 import { Metric } from './metrics/models/metrics.model';
-import { CreateMeasureMetricDto } from './metrics/dto/create-measure-metric.dto';
-import { UpdateMesureMetricDto } from './metrics/dto/update-measure-metric.dto';
 import { Complex } from '../complexes/models/complex.model';
+import { BaseIndicator } from './models/base-indicator.model';
+import { StagedIndicator } from './models/staged-indicator.model';
+import { BaseIndicatorMetrics } from './models/base_indicator-metrics.model';
 
 
 @Module({
@@ -17,8 +16,9 @@ import { Complex } from '../complexes/models/complex.model';
   providers: [IndicatorsService, MetricsService],
   imports: [
     SequelizeModule.forFeature([
-      Indicator,
-      IndicatorMetrics,
+      BaseIndicator,
+      StagedIndicator,
+      BaseIndicatorMetrics,
       Complex,
       Metric,
     ]),]

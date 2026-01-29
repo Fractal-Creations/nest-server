@@ -1,7 +1,7 @@
-import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { Indicator } from "./indicator.model";
+/* import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { ApiProperty } from "@nestjs/swagger";
 import { Metric } from "../metrics/models/metrics.model";
+import { BaseIndicator } from "./base-indicator.model";
 
 @Table({tableName: 'indicator_metrics', createdAt: false, updatedAt: false})
 export class IndicatorMetrics extends Model<IndicatorMetrics>{
@@ -10,11 +10,11 @@ export class IndicatorMetrics extends Model<IndicatorMetrics>{
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4, unique: true, primaryKey: true })
     readonly id: String;
 
-    @ForeignKey(()=> Indicator)
+    @ForeignKey(()=> BaseIndicator)
     @Column({type: DataType.UUIDV4, allowNull: false})
     readonly indicatorId: string;
 
     @ForeignKey(() => Metric)
     @Column({type: DataType.UUIDV4, allowNull: false})
     readonly metricId: string;
-}
+} */
