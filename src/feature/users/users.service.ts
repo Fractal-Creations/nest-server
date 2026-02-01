@@ -67,7 +67,7 @@ export class UsersService {
           { name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), Op.like, `%${ keySearch.toLowerCase() }%`) },
           { patronymic: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('patronymic')), Op.like, `%${ keySearch.toLowerCase() }%`) },
           { phone: { [Op.like]: `%${ keySearch }%` } },
-        ],
+      ],
       };
 
 

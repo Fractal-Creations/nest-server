@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize/dist/common/sequelize.decorators'
 import { TestingSession } from './models/testing-session.model';
 import { Complex } from '../complexes/models/complex.model';
 import { User } from '../users/users.model';
-import { TestingSessionDto } from './dto/testing-session.dto';
+import { TestingSessionDto, TestingSessionPaginationDto } from './dto/testing-session.dto';
 import { PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
 import { Includeable, Op, Sequelize } from 'sequelize';
 import { UserUtils } from '../common/utils/user.util';
@@ -79,7 +79,7 @@ export class TestingSessionService {
     paginationOptions: PaginationQuery,
     include: Includeable | Includeable[] = [],
     status: TestingSessionStatus | null,
-  ): Promise<PaginationDto<TestingSessionDto>> {
+  ): Promise<PaginationDto<TestingSessionPaginationDto>> {
 
     const keySearch = paginationOptions?.searchKey;
 
@@ -102,10 +102,6 @@ export class TestingSessionService {
       whereCondition[Op.and].push({ status: { [Op.eq]: status } });
     }
 
-
-
-   
-
     var response = (await this.paginationService.findAll<TestingSession>(
       {
         ...paginationOptions,
@@ -117,15 +113,34 @@ export class TestingSessionService {
           {
             model: Complex,
             as: 'complex',
-            attributes: ['title'],
+            include: [
+              {model: StagedIndicator}
+            ]
           }
         ],
 
       },
     ));
 
-    return new PaginationDto<TestingSessionDto>(
-      response.data.map((dto) => new TestingSessionDto(dto)),
+    var paginationDtos = await Promise.all(response.data.map(async (model) =>  {
+      var researchers =  await Promise.all(model.researchersIds.map(async (id) => {
+        var k =  await this.userRepository.findOne({ where: { id: id } }).then((user) => user);
+        return k;
+      }));
+
+      return new TestingSessionPaginationDto(
+        model.id,
+        model.status,
+        model.currentIndicatorNumber,
+        model.complex.indicators.length,
+        model.complex.title,
+        model.subjectName,
+        researchers.map((user) => UserUtils.getFio(user))
+      );
+    }));
+
+    return new PaginationDto<TestingSessionPaginationDto>(
+      paginationDtos,
       response.total,
       response.totalPages,
       response.page,

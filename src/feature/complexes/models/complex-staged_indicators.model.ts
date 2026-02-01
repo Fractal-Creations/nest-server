@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Complex } from "./complex.model";
 import { StagedIndicator } from "src/feature/indicators/models/staged-indicator.model";
 
@@ -17,4 +17,15 @@ export class ComplexStagedIndicators extends Model<ComplexStagedIndicators>{
     @ForeignKey(() => Complex)
     @Column({type: DataType.UUIDV4, allowNull: false})
     readonly complexId: string;
+
+    @ApiProperty({example: 1, description: 'Порядок индикатора в комплексе'})
+    @Column({type: DataType.INTEGER, allowNull: false, defaultValue: 0})
+    readonly order: number;
+
+    // Добавляем связи с явным указанием onDelete
+    @BelongsTo(() => Complex)
+    complex: Complex;
+
+    @BelongsTo(() => StagedIndicator)
+    indicator: StagedIndicator;
 }

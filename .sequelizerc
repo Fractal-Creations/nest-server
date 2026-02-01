@@ -1,0 +1,9 @@
+// .sequelizerc
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve(__dirname, 'sequelize-cli.config.js'),
+  'migrations-path': path.resolve(__dirname, 'src/core/database/migrations'),
+  // Опционально, если используете сидеры:
+  // 'seeders-path': path.resolve(__dirname, 'src/core/database/seeders'),
+};
