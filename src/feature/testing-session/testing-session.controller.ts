@@ -9,6 +9,7 @@ import { Pagination, PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagina
 import { PaginationDto } from '../common/pagination.dto';
 import { ComplexDto } from '../complexes/dto/complex.dto';
 import { TestingSessionStatus } from './testing-session.enum';
+import { TestingSessionFindAllQuery } from './query/testing_session_find_all_query';
 
 
 @ApiTags('Сеансы тестирования')
@@ -39,10 +40,9 @@ export class TestingSessionController {
   }
 
   @ApiOperation({summary: 'Поиск сеансов тестирования'})
-  @ApiQuery({ name: 'status', enum: TestingSessionStatus, description: 'Статус', required: false })
   @Get()
   async findAll(
-    @Query('status') status: TestingSessionStatus,
+    @Query() query: TestingSessionFindAllQuery,
     @Pagination({
       limit: 10,
       page: 0,
@@ -51,7 +51,7 @@ export class TestingSessionController {
     })
     pagination: PaginationQuery,
   ) {
-    return this.testingService.findAll(pagination, null, status);
+    return this.testingService.findAll(pagination, query);
   }
 
     @ApiOperation({summary: 'Подключиться к тестированию'})

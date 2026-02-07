@@ -9,6 +9,7 @@ interface BaseIndicatorCreationAttrs {
     title: string;
     characteristicType: IndicatorType
     description?: string;
+    isEndToEnd: boolean;
     comment?: string;
     measures?: string[];
 }
@@ -37,12 +38,16 @@ export class BaseIndicator extends Model<BaseIndicator, BaseIndicatorCreationAtt
     @Column({type: DataType.STRING, allowNull: true})
     comment?: string;
 
+    @ApiProperty({example: false, description: 'Флаг сквозного индикатора', nullable: false, default: false})
+    @Column({type: DataType.BOOLEAN, allowNull: false, defaultValue: false})
+    isEndToEnd: boolean;
+
     @ApiProperty({type: [Metric],description: 'Список метрик, необходимых для данного показателя', nullable: true})
     @IsOptional()
     @BelongsToMany(() => Metric, () => BaseIndicatorMetrics)
     metrics?: Array<Metric & {HealthIndicatorMeasureTypes: BaseIndicatorMetrics}>;
 
-    @ApiProperty({  description: 'Метрика для границ данного показателя. Например: "Челочный бег на расстнояние 10, 20, 30 м', nullable: true})
+    @ApiProperty({  description: 'Метрика для границ данного показателя. Например: "Челочный бег на расстояние 10, 20, 30 м', nullable: true})
     @IsOptional()
     @BelongsTo(() => Metric)
     boundaryMetric?: Metric;

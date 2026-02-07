@@ -18,6 +18,7 @@ import {
   Pagination
 } from '@ntheanh201/nestjs-sequelize-pagination';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiAuth } from 'src/core/decorators/api-auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles-auth.decorator';
 import e from 'express';
@@ -45,9 +46,18 @@ export class UsersController {
     return UserDto.fromModel(await this.userService.createUser(userDto));
   }
 
-  @ApiOperation({ summary: 'Получить список всех пользователей' })
+  @ApiOperation({
+    summary: 'Получить список всех пользователей',
+    description: `
+      Получить список всех пользователей с пагинацией.
+      Требует аутентификации: поддерживает гибридную систему -
+      - Веб-клиенты: аутентификация через cookie 'accessToken'
+      - Мобильные клиенты: аутентификация через заголовок Authorization: Bearer <token>
+    `
+  })
   @ApiResponse({ status: 200, type: [UserDto] })
-  //@UseGuards(JwtAuthGuard)
+  @ApiAuth() // Документация для гибридной аутентификации
+  @UseGuards(JwtAuthGuard)
   //@Roles(RoleType.ADMIN )
   //@UseGuards(RolesGuard)
   @Get()
@@ -63,18 +73,36 @@ export class UsersController {
     return this.userService.findAll(pagination );
   }
 
-  @ApiOperation({ summary: 'Получить профиль пользователя' })
+  @ApiOperation({
+    summary: 'Получить профиль пользователя',
+    description: `
+      Получить профиль пользователя по ID.
+      Требует аутентификации: поддерживает гибридную систему -
+      - Веб-клиенты: аутентификация через cookie 'accessToken'
+      - Мобильные клиенты: аутентификация через заголовок Authorization: Bearer <token>
+    `
+  })
   @ApiResponse({ status: 200, type: UserDto })
+  @ApiAuth() // Документация для гибридной аутентификации
 
   //@UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUserProfileById(@Param('id') id?: string): Promise<UserDto> {
-    return this.userService.findOne(id); 
+    return this.userService.findOne(id);
   }
 
 
-  @ApiOperation({ summary: 'Присвоить роль пользователю' })
+  @ApiOperation({
+    summary: 'Присвоить роль пользователю',
+    description: `
+      Присвоить роль пользователю по ID.
+      Требует аутентификации: поддерживает гибридную систему -
+      - Веб-клиенты: аутентификация через cookie 'accessToken'
+      - Мобильные клиенты: аутентификация через заголовок Authorization: Bearer <token>
+    `
+  })
   @ApiResponse({ status: 200 })
+  @ApiAuth() // Документация для гибридной аутентификации
   //@UseGuards(JwtAuthGuard)
   //@Roles(RoleType.ADMIN)
   //@UseGuards(RolesGuard)

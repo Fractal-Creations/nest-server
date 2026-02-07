@@ -79,7 +79,12 @@ Third - copy .env file to VPS
 $ scp /Users/totalfractal/NodeProjects/svt-server/src/.docker.dev.env root@188.225.47.232:/home/drngk/svt-docker-dev-deploy/
 ```
 
+## Для генерации самоподписных сертификатов в режиме разработки:
 
+```bash
+$ mkdir ssl
+$ openssl req -nodes -new -x509 -keyout ssl/private-key.pem -out ssl/certificate.pem
+```
 
 
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional } from "class-validator";
+import { IsBoolean, IsOptional } from "class-validator";
 import {  IndicatorType } from "../indicators.enum";
 import { Metric } from "../metrics/models/metrics.model";
 import { MetricDto } from "src/feature/indicators/metrics/dto/metric.dto";
@@ -25,6 +25,11 @@ export class BaseIndicatorDto  {
     @IsOptional()
     readonly comment?: string;
 
+    @ApiProperty({ example: true, description: 'Флаг сквозного индикатора', default: false, nullable: false })
+    @IsBoolean()
+    @IsOptional()
+    readonly isEndToEnd?: boolean;
+
     @ApiProperty({ example: [MetricDto], type: Array<MetricDto>, description: 'Список метрик, необходимых для данного показателя', nullable: true })
     @IsOptional()
     metrics?: Array<MetricDto>;
@@ -39,8 +44,11 @@ export class BaseIndicatorDto  {
         this.characteristicType = model.characteristicType;
         this.description = model.description;
         this.comment = model.comment;
+        this.isEndToEnd = model.isEndToEnd ?? false;
         this.metrics = metrics?.map(m => new MetricDto(m)) ?? model.metrics?.map(m => new MetricDto(m));
         this.boundaryMetric = model.boundaryMetric != null ?  new MetricDto(model.boundaryMetric) : boundaryMetric != null ?   new MetricDto(boundaryMetric) : null;
     }
     
 }
+
+

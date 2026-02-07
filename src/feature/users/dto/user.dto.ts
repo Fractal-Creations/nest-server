@@ -12,7 +12,37 @@ import { RoleType } from "src/feature/roles/roles.const";
 
 
 
-export class UserDto extends BaseClass {
+export class UserDto {
+
+    constructor(
+        id: string,
+        surname: string,
+        name: string,
+        patronymic: string,
+        gender: GenderEnum,
+        birthDate: Date,
+        nativeCity: string,
+        nativeCityFiasId: string,
+        isNative: boolean,
+        currentCity: string,
+        currentCityFiasId: string,
+        phone: string,
+        email: string
+    ) {
+        this.id = id;
+        this.surname = surname;
+        this.name = name;
+        this.patronymic = patronymic;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.nativeCity = nativeCity;
+        this.nativeCityFiasId = nativeCityFiasId;
+        this.isNative = isNative;
+        this.currentCity = currentCity;
+        this.currentCityFiasId = currentCityFiasId;
+        this.phone = phone;
+        this.email = email;
+    }
 
     @ApiProperty({example: '03b36516-f4b2-11ed-a05b-0242ac120003', description: 'Уникальный ключ UUID'})
     readonly id: String;
@@ -58,41 +88,26 @@ export class UserDto extends BaseClass {
     roles: RoleDto[];
 
     static fromModel(model: User) : UserDto {
-        const dto = UserDto.create({
-            id: model.id,
-            surname: model.surname,
-            name: model.name,
-            patronymic: model.patronymic,
-            gender: model.gender,
-            birthDate: model.birthDate,
-            nativeCity: model.nativeCity,
-            nativeCityFiasId: model.nativeCityFiasId,
-            isNative: model.isNative,
-            currentCity: model.currentCity,
-            currentCityFiasId: model.currentCityFiasId,
-            phone: model.phone,
-            email: model.email,
-        });
+        const dto = new UserDto(
+            model.id,
+            model.surname,
+            model.name,
+            model.patronymic,
+            GenderEnum[model.gender],
+            model.birthDate, model.nativeCity,
+            model.nativeCityFiasId,
+            model.isNative,
+            model.currentCity,
+            model.currentCityFiasId,
+            model.phone,
+            model.email);
+
         return dto;
     }
 
     static fromModelAndRoles(model: User, roles: Role[]) : UserDto {
-        const dto = UserDto.create({
-            id: model.id,
-            surname: model.surname,
-            name: model.name,
-            patronymic: model.patronymic,
-            gender: model.gender,
-            birthDate: model.birthDate,
-            nativeCity: model.nativeCity,
-            nativeCityFiasId: model.nativeCityFiasId,
-            isNative: model.isNative,
-            currentCity: model.currentCity,
-            currentCityFiasId: model.currentCityFiasId,
-            phone: model.phone,
-            email: model.email,
-            roles: roles.map(role => RoleDto.fromModel(role)),
-        });
+        const dto = UserDto.fromModel(model);
+        dto.roles = roles.map(role => RoleDto.fromModel(role));
         return dto;
     }
 }

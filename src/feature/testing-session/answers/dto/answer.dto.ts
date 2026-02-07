@@ -26,7 +26,10 @@ export class AnswerDto {
     @ApiProperty({example: 'Комментарий', description: 'Комментарий'})
     readonly comment?: string;
 
-    constructor (model: Answer, ) {
+    @ApiProperty({example: '2024-01-01T00:00:00+03:00', description: 'Дата ответа'})
+    readonly date: Date;
+
+    constructor (model: Answer) {
         this.id = model.id;
         this.grade = model.grade;
         this.indicatorId = model.indicatorId;
@@ -34,5 +37,6 @@ export class AnswerDto {
         this.subjectId = model.subjectId;
         this.researcherId = model.researcherId;
         this.comment = model.comment;
+        this.date = model.createdAt;
     }
 }

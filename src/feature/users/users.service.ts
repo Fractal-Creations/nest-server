@@ -58,45 +58,42 @@ export class UsersService {
     const keySearch = paginationOptions?.searchKey;
 
     if (keySearch) {
-      if (keySearch == '') {
-        return PaginationDto.empty();
-      }
       whereCondition = {
         [Op.or]: [
           { surname: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('surname')), Op.like, `%${ keySearch.toLowerCase() }%`) },
           { name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), Op.like, `%${ keySearch.toLowerCase() }%`) },
           { patronymic: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('patronymic')), Op.like, `%${ keySearch.toLowerCase() }%`) },
           { phone: { [Op.like]: `%${ keySearch }%` } },
-      ],
+        ],
       };
-
-
-
-      let response = await this.paginationService.findAll<User>(
-        {
-          ...paginationOptions,
-          model: User,
-
-
-        },
-        {
-          where: whereCondition,
-          include: Role,
-          order: [['surname', 'ASC'], ['name', 'ASC'], ['patronymic', 'ASC']],
-          attributes: ['id', 'surname', 'name', 'patronymic', 'phone', 'email', 'gender', 'birthDate', 'nativeCity', 'isNative', 'currentCity'],
-
-        },
-      );
-
-      return new PaginationDto<UserDto>(
-        response.data,
-        response.total,
-        response.totalPages,
-        response.page,
-        response.limit
-      )
     }
-    
+
+    let response = await this.paginationService.findAll<User>(
+      {
+        ...paginationOptions,
+        model: User,
+      },
+      {
+        where: whereCondition,
+        include: {
+          model: Role,
+          attributes:['id','value', 'description'],
+        },
+        order: [['surname', 'ASC'], ['name', 'ASC'], ['patronymic', 'ASC']],
+        attributes: ['id', 'surname', 'name', 'patronymic', 'phone', 'email', 'gender', 'birthDate', 'nativeCity', 'isNative', 'currentCity'],
+
+      },
+    );
+
+    return new PaginationDto<UserDto>(
+      response.data.map((model) => UserDto.fromModelAndRoles(model, model.roles)),
+      response.total,
+      response.totalPages,
+      response.page,
+      response.limit
+    )
+
+
   }
 
   async findOne(idUser: string): Promise<UserDto> {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { ComplexesService } from './complexes.service';
 import { CreateSurveyDto } from './dto/create-complex.dto';
 import { UpdateSurveyDto } from './dto/update-complex.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { Complex } from './models/complex.model';
 import { AddIndicatorDto } from './dto/add-indicator.dto';
 import {
@@ -15,6 +15,7 @@ import { PaginationComplexDto } from './dto/pagination-complex.dto';
 import { GenderEnum } from 'src/feature/users/users.const';
 import { ComplexStage } from './complexes.const';
 import { PaginationDto } from '../common/pagination.dto';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Комплексы')
 @Controller('complexes')
@@ -36,11 +37,12 @@ export class SurveysController {
     return this.surveysService.createRanged(createSurveyDto);
   }
 
-   @ApiOperation({summary: 'Добавление комплекса c свободным количеством показателей'})
+  @ApiOperation({summary: 'Добавление комплекса c свободным количеством показателей'})
   @ApiResponse({status: 201, type: ComplexDto})
   @ApiQuery({ name: 'gender', enum: GenderEnum})
   @ApiQuery({ name: 'stage', enum: ComplexStage})
   @Post('free')
+
   async create(
     @Query('gender') gender: GenderEnum = GenderEnum.FEMALE,
     @Query('stage') stage: ComplexStage = ComplexStage.one,

@@ -28,3 +28,4 @@ export enum IndicatorMandatory {
   /// Возможный 
   possible = 'possible',
 }
+

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, Res } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { User } from "./feature/users/users.model";
@@ -12,6 +12,7 @@ import { PaginationModule } from '@ntheanh201/nestjs-sequelize-pagination';
 import { CitiesModule } from './feature/cities/cities.module';
 import { AuthModule } from "./feature/auth/auth.module";
 import { TestingSessionModule } from "./feature/testing-session/testing-session.module";
+import { ResultsModule } from "./feature/results/results.module";
 
 
 @Module({
@@ -45,8 +46,9 @@ import { TestingSessionModule } from "./feature/testing-session/testing-session.
     ComplexesModule,
     IndicatorsModule,
     TestingSessionModule,
-    PaginationModule.forRoot({ isGlobal: true }),
+    PaginationModule.forRoot({ isGlobal: true,  }),
     CitiesModule,
+    ResultsModule,
   ],
 })
 export class AppModule { }

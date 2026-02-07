@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize/dist/common/sequelize.decorators'
 import { TestingSession } from './models/testing-session.model';
 import { Complex } from '../complexes/models/complex.model';
 import { User } from '../users/users.model';
-import { TestingSessionDto, TestingSessionPaginationDto } from './dto/testing-session.dto';
+
 import { PaginationQuery } from '@ntheanh201/nestjs-sequelize-pagination';
 import { Includeable, Op, Sequelize } from 'sequelize';
 import { UserUtils } from '../common/utils/user.util';
@@ -26,6 +26,9 @@ import { BaseIndicator } from '../indicators/models/base-indicator.model';
 import { Metric } from '../indicators/metrics/models/metrics.model';
 import { Role } from '../roles/roles.model';
 import { Answer } from './answers/models/answers.model';
+import { TestingSessionFindAllQuery } from './query/testing_session_find_all_query';
+import { TestingSessionPaginationDto } from './dto/testing-session-pagination.dto';
+import { TestingSessionDto } from './dto/testing-session.dto';
 
 @Injectable()
 export class TestingSessionService {
@@ -52,7 +55,7 @@ export class TestingSessionService {
       this.logger.debug('Cant find subject');
       throw new HttpException(`Не удалось найти испытуемого`, HttpStatus.BAD_REQUEST);
     }
-    const reserahcer = await this.userRepository.findOne({ where: { id: createTestingSessionDto.researchersIds.at(0) } });
+    const reserahcer = await this.userRepository.findOne({ where: { id: createTestingSessionDto.researchersIds[0] } });
     if (!reserahcer) {
       this.logger.debug('Cant find researcher');
       throw new HttpException(`Не удалось найти исследователя`, HttpStatus.BAD_REQUEST);
@@ -77,8 +80,7 @@ export class TestingSessionService {
 
   async findAll(
     paginationOptions: PaginationQuery,
-    include: Includeable | Includeable[] = [],
-    status: TestingSessionStatus | null,
+    query: TestingSessionFindAllQuery,
   ): Promise<PaginationDto<TestingSessionPaginationDto>> {
 
     const keySearch = paginationOptions?.searchKey;
@@ -98,17 +100,37 @@ export class TestingSessionService {
     }
 
     // Поиск по title в base-indicators
-    if (status) {
-      whereCondition[Op.and].push({ status: { [Op.eq]: status } });
+    if (query.status) {
+      whereCondition[Op.and].push({ status: { [Op.eq]: query.status } });
     }
+
+    if (query.subjectId) {
+      whereCondition[Op.and].push({ subjectId: { [Op.eq]: query.subjectId } });
+    }
+
+    // Фильтры по date
+    if (query.startDate && !query.endDate) {
+      whereCondition[Op.and].push({ createdAt: { [Op.gte]: query.startDate } });
+    }
+    else if (!query.startDate && query.endDate) {
+      whereCondition[Op.and].push({ createdAt: { [Op.lte]: query.endDate } });
+    }
+    else if (query.startDate && query.endDate) {
+      whereCondition[Op.and].push({ createdAt: { [Op.between]: [query.startDate, query.endDate] } });
+    }
+
+
 
     var response = (await this.paginationService.findAll<TestingSession>(
       {
         ...paginationOptions,
         model: TestingSession,
+
       },
       {
+
         where: whereCondition,
+        distinct: true,
         include: [
           {
             model: Complex,
@@ -118,6 +140,7 @@ export class TestingSessionService {
             ]
           }
         ],
+        
 
       },
     ));
